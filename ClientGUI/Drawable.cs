@@ -21,7 +21,9 @@ namespace ClientGUI
 
             foreach (Player player in players)
             {
-                //draw each circle
+                // ConvertFromWorldToScreen
+
+                // draw each circle
                 canvas.StrokeColor = Colors.Black;
                 canvas.StrokeSize = 2;
                 canvas.FillColor = Colors.Red;
@@ -30,7 +32,9 @@ namespace ClientGUI
 
             foreach (Food food in foods)
             {
-                //draw each circle
+                // ConvertFromWorldToScreen
+
+                // draw each circle
                 canvas.StrokeColor = Colors.Black;
                 canvas.StrokeSize = 2;
                 canvas.FillColor = Colors.Red;

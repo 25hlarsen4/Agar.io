@@ -29,7 +29,7 @@ namespace ClientGUI
             client.ClientAwaitMessagesAsync();
 
             IDispatcherTimer timer = Dispatcher.CreateTimer();
-            TimeSpan span = TimeSpan.FromSeconds(60);
+            TimeSpan span = TimeSpan.FromSeconds(30);
             timer.Interval = span;
             timer.Tick += (s, e) => TickEvent();
             timer.Start();
@@ -43,7 +43,9 @@ namespace ClientGUI
 
         private void OnConnect(Networking networking)
         {
-
+            //networking.Send("{Command Player Object}");
+            // or ???????????
+            //client.Send("{Command Player Object}");
         }
 
         private void OnDisconnect(Networking networking)

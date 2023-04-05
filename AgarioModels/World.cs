@@ -17,8 +17,8 @@ namespace AgarioModels
         readonly int width = 5000;
         readonly int height = 5000;
 
-        public HashSet<Player> players;
-        public HashSet<Food> food;
+        public Dictionary<long, Player> players;
+        public Dictionary<long, Food> foods;
 
         public World()
         {
