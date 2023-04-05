@@ -10,14 +10,19 @@ namespace AgarioModels
     /// <summary>
     /// This class represents the "state" of the simulation
     /// </summary>
-    internal class World
+    public class World
     {
-        // also store a logger
+        //readonly ILogger logger;
 
         readonly int width = 5000;
         readonly int height = 5000;
 
-        HashSet<Player> players;
-        HashSet<Food> food;
+        public HashSet<Player> players;
+        public HashSet<Food> food;
+
+        public World()
+        {
+            //this.logger = logger;
+        }
     }
 }

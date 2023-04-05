@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 
 namespace AgarioModels
 {
-    internal class GameObject
+    public class GameObject
     {
         int ID;
 
         int ARGBcolor;
 
-        float mass;
+        public float mass;
 
         // determine by considering the mass to be the area/vol
-        float radius;
+        public float radius;
 
         Vector2 position = new Vector2(100, 100);
 

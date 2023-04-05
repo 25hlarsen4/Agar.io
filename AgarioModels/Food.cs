@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AgarioModels
 {
-    internal class Food : GameObject
+    public class Food : GameObject
     {
     }
 }
