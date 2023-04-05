@@ -52,4 +52,14 @@
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\AgarioModels\AgarioModels.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Reference Include="Communications">
+	    <HintPath>..\libs\Communications.dll</HintPath>
+	  </Reference>
+	</ItemGroup>
+
 </Project>
