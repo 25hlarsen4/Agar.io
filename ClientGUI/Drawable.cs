@@ -36,7 +36,7 @@ namespace ClientGUI
                 canvas.StrokeColor = Colors.Black;
                 canvas.StrokeSize = 2;
                 canvas.FillColor = Colors.Red;
-                canvas.FillCircle(food.xPos, food.yPos, food.radius);
+                canvas.FillCircle(food.X, food.Y, food.getRadius());
             }
         }
     }

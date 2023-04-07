@@ -9,25 +9,29 @@ namespace AgarioModels
 {
     public class GameObject
     {
-        public int ID;
 
-        int ARGBcolor;
+        public Vector2 position;
 
-        public float mass;
+        public int ID { get; set; }
+
+        public int ARGBColor { get; set; } 
+
+        public float Mass { get; set; }
 
         // determine by considering the mass to be the area/vol
-        public float radius;
+        private float radius;
+        
 
-        Vector2 position = new Vector2(100, 100);
-
-        public float xPos
+        public float getRadius()
         {
-            get { return position.X; }
+           return (float)Math.Sqrt(Mass / float.Pi); 
         }
 
-        public float yPos
-        {
-            get { return position.Y; }
-        }
+        public float X { get; set; }
+
+        public float Y { get; set; }
+
+
+            
     }
 }

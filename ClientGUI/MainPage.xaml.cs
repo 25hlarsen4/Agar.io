@@ -1,5 +1,4 @@
 ﻿using AgarioModels;
-using AndroidX.ConstraintLayout.Helper.Widget;
 using Communications;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json;
@@ -93,6 +92,8 @@ namespace ClientGUI
                     if (!drawable.world.foods.ContainsValue(food))
                     {
                         drawable.world.foods.Add(food.ID, food);
+                        food.position.X = food.X;
+                        food.position.Y = food.Y;
                     }
                 }
             }
