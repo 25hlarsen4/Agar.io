@@ -100,63 +100,63 @@ namespace ClientGUI
 
 
 
-            // This is new code to handle other messages but I have it commented out so we can just
+            //This is new code to handle other messages but I have it commented out so we can just
             // testing displaying the food first:
 
 
-            //// {Command Dead Players}[5,10,20,30,16,121,...]
-            //else if (message.Contains(Protocols.CMD_Dead_Players))
-            //{
-            //    // this will be [5,10,20,30,16,121,...]
-            //    string deadPlayerIDs = message.Substring(22);
-            //    deadPlayerIDs = deadPlayerIDs.Replace("[", String.Empty);
-            //    deadPlayerIDs = deadPlayerIDs.Replace("]", String.Empty);
-            //    string[] idStrings = deadPlayerIDs.Split(',');
+            // {Command Dead Players}[5,10,20,30,16,121,...]
+            else if (message.Contains(Protocols.CMD_Dead_Players))
+            {
+                // this will be [5,10,20,30,16,121,...]
+                string deadPlayerIDs = message.Substring(22);
+                deadPlayerIDs = deadPlayerIDs.Replace("[", String.Empty);
+                deadPlayerIDs = deadPlayerIDs.Replace("]", String.Empty);
+                string[] idStrings = deadPlayerIDs.Split(',');
 
-            //    List<int> IDs = new List<int>();
-            //    foreach (string idString in idStrings)
-            //    {
-            //        if (int.TryParse(idString, out int ID))
-            //        {
-            //            IDs.Add(ID);
-            //        }
-            //    }
+                List<int> IDs = new List<int>();
+                foreach (string idString in idStrings)
+                {
+                    if (int.TryParse(idString, out int ID))
+                    {
+                        IDs.Add(ID);
+                    }
+                }
 
-            //    foreach (int id in IDs)
-            //    {
-            //        if (drawable.world.players.Keys.Contains(id))
-            //        {
-            //            drawable.world.players.Remove(id);
-            //        }
-            //    }
-            //}
+                foreach (int id in IDs)
+                {
+                    if (drawable.world.players.Keys.Contains(id))
+                    {
+                        drawable.world.players.Remove(id);
+                    }
+                }
+            }
 
-            //// {Command Eaten Food}[2701,2546,515,1484,2221,240,1378,1124,1906,1949]
-            //else if (message.Contains(Protocols.CMD_Eaten_Food))
-            //{
-            //    // this will be [2701,2546,515,1484,2221,240,1378,1124,1906,1949]
-            //    string eatenFood = message.Substring(20);
-            //    eatenFood = eatenFood.Replace("[", String.Empty);
-            //    eatenFood = eatenFood.Replace("]", String.Empty);
-            //    string[] eatenFoods = eatenFood.Split(',');
+            // {Command Eaten Food}[2701,2546,515,1484,2221,240,1378,1124,1906,1949]
+            else if (message.Contains(Protocols.CMD_Eaten_Food))
+            {
+                // this will be [2701,2546,515,1484,2221,240,1378,1124,1906,1949]
+                string eatenFood = message.Substring(20);
+                eatenFood = eatenFood.Replace("[", String.Empty);
+                eatenFood = eatenFood.Replace("]", String.Empty);
+                string[] eatenFoods = eatenFood.Split(',');
 
-            //    List<int> IDs = new List<int>();
-            //    foreach (string food in eatenFoods)
-            //    {
-            //        if (int.TryParse(food, out int ID))
-            //        {
-            //            IDs.Add(ID);
-            //        }
-            //    }
+                List<int> IDs = new List<int>();
+                foreach (string food in eatenFoods)
+                {
+                    if (int.TryParse(food, out int ID))
+                    {
+                        IDs.Add(ID);
+                    }
+                }
 
-            //    foreach (int id in IDs)
-            //    {
-            //        if (drawable.world.foods.Keys.Contains(id))
-            //        {
-            //            drawable.world.foods.Remove(id);
-            //        }
-            //    }
-            //}
+                foreach (int id in IDs)
+                {
+                    if (drawable.world.foods.Keys.Contains(id))
+                    {
+                        drawable.world.foods.Remove(id);
+                    }
+                }
+            }
         }
     }
 }
