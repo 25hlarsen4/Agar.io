@@ -1,12 +1,10 @@
 ﻿using AgarioModels;
-using AndroidX.ConstraintLayout.Helper.Widget;
 using Microsoft.Maui.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Android.Graphics.ColorSpace;
 
 namespace ClientGUI
 {
@@ -16,21 +14,21 @@ namespace ClientGUI
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
-            HashSet<AgarioModels.Players> players = world.players;
-            HashSet<Food> foods = world.food;
+            //HashSet<AgarioModels.Players> players = world.players;
+            //HashSet<Food> foods = world.food;
 
-            foreach (Player player in players)
-            {
-                // ConvertFromWorldToScreen
+            //foreach (Player player in world.players.Values)
+            //{
+            //    // ConvertFromWorldToScreen
 
-                // draw each circle
-                canvas.StrokeColor = Colors.Black;
-                canvas.StrokeSize = 2;
-                canvas.FillColor = Colors.Red;
-                canvas.FillCircle(player.xPos, player.yPos, player.radius);
-            }
+            //    // draw each circle
+            //    canvas.StrokeColor = Colors.Black;
+            //    canvas.StrokeSize = 2;
+            //    canvas.FillColor = Colors.Red;
+            //    canvas.FillCircle(player.xPos, player.yPos, player.radius);
+            //}
 
-            foreach (Food food in foods)
+            foreach (Food food in world.foods.Values)
             {
                 // ConvertFromWorldToScreen
 

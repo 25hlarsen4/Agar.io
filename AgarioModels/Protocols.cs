@@ -21,6 +21,7 @@ namespace AgarioModels
         ///     Example: {Command Player Object}5
         ///   </para>
         /// </summary>
+        /// SENT TO THE PLAYER TO GIVE THEM THEIR ID?
         public const string CMD_Player_Object  = "{Command Player Object}";
 
         /// <summary>
@@ -37,6 +38,7 @@ namespace AgarioModels
         ///     Example:   {Command Food}[{"X":344,"Y":1216,"ARGBColor":-1977629,"ID":3053,"Mass":50}]
         ///   </para>
         /// </summary>
+        /// ALERTS THE PLAYER WHEN TO ADD FOOD TO LIST
         public const string CMD_Food           = "{Command Food}";
 
         /// <summary>
@@ -52,6 +54,7 @@ namespace AgarioModels
         ///     Example: {Command Dead Players}[5,10,20,30,16,121,...]
         ///   </para>
         /// </summary>
+        /// ALERTS THE PLAYER WHEN TO REMOVE PLAYERS FROM LIST
         public const string CMD_Dead_Players   = "{Command Dead Players}";
 
         /// <summary>
@@ -67,6 +70,7 @@ namespace AgarioModels
         ///     Example: {Command Eaten Food}[2701,2546,515,1484,2221,240,1378,1124,1906,1949]
         ///   </para>
         /// </summary>
+        /// ALERTS THE PLAYER WHEN TO REMOVE FOOD FROM LIST
         public const string CMD_Eaten_Food     = "{Command Eaten Food}";
 
         /// <summary>
@@ -97,6 +101,7 @@ namespace AgarioModels
         ///     Example: {Command Players}[{"Name":"player_0,0","X":0,"Y":0,"ARGBColor":-16777088,"ID":3000,"Mass":2999.726},{"Name":"player_0,1000","X":0,"Y":1000,"ARGBColor":-2987746,"ID":3001,"Mass":2999.726},{"Name":"player_0,2000","X":0,"Y":2000,"ARGBColor":-65536,"ID":3002,"Mass":2999.726},{"Name":"player_0,3000","X":0,"Y":3000,"ARGBColor":-16776961,"ID":3003,"Mass":2999.726},{"Name":"player_0,4000","X":0,"Y":4000,"ARGBColor":-16181,"ID":3004,"Mass":2999.726},{"Name":"player_0,5000","X":0,"Y":5000,"ARGBColor":-8388480,"ID":3005,"Mass":3049.7239},{"Name":"player_1000,0","X":1000,"Y":0,"ARGBColor":-16744448,"ID":3006,"Mass":2999.726},{"Name":"player_1000,1000","X":1000,"Y":1000,"ARGBColor":-16711681,"ID":3007,"Mass":2999.726},{"Name":"player_1000,2000","X":1000,"Y":2000,"ARGBColor":-16777216,"ID":3008,"Mass":2999.726},{"Name":"player_1000,3000","X":1000,"Y":3000,"ARGBColor":-657956,"ID":3009,"Mass":3049.7239},{"Name":"player_1000,4000","X":1000,"Y":4000,"ARGBColor":-3308225,"ID":3010,"Mass":2999.726},{"Name":"player_1000,5000","X":1000,"Y":5000,"ARGBColor":-16777088,"ID":3011,"Mass":2999.726},{"Name":"player_2000,0","X":2000,"Y":0,"ARGBColor":-2987746,"ID":3012,"Mass":2999.726},{"Name":"player_2000,1000","X":2000,"Y":1000,"ARGBColor":-65536,"ID":3013,"Mass":2999.726},{"Name":"player_2000,2000","X":2000,"Y":2000,"ARGBColor":-16776961,"ID":3014,"Mass":2999.726},{"Name":"player_2000,3000","X":2000,"Y":3000,"ARGBColor":-16181,"ID":3015,"Mass":3049.7239},{"Name":"player_2000,4000","X":2000,"Y":4000,"ARGBColor":-8388480,"ID":3016,"Mass":2999.726},{"Name":"player_2000,5000","X":2000,"Y":5000,"ARGBColor":-16744448,"ID":3017,"Mass":2999.726},{"Name":"player_3000,0","X":3000,"Y":0,"ARGBColor":-16711681,"ID":3018,"Mass":2999.726},{"Name":"player_3000,1000","X":3000,"Y":1000,"ARGBColor":-16777216,"ID":3019,"Mass":3149.7195},{"Name":"player_3000,2000","X":3000,"Y":2000,"ARGBColor":-657956,"ID":3020,"Mass":3049.7239},{"Name":"player_3000,3000","X":3000,"Y":3000,"ARGBColor":-3308225,"ID":3021,"Mass":2999.726},{"Name":"player_3000,4000","X":3000,"Y":4000,"ARGBColor":-16777088,"ID":3022,"Mass":2999.726},{"Name":"player_3000,5000","X":3000,"Y":5000,"ARGBColor":-2987746,"ID":3023,"Mass":2999.726},{"Name":"player_4000,0","X":4000,"Y":0,"ARGBColor":-65536,"ID":3024,"Mass":2999.726},{"Name":"player_4000,1000","X":4000,"Y":1000,"ARGBColor":-16776961,"ID":3025,"Mass":3049.7239},{"Name":"player_4000,2000","X":4000,"Y":2000,"ARGBColor":-16181,"ID":3026,"Mass":2999.726},{"Name":"player_4000,3000","X":4000,"Y":3000,"ARGBColor":-8388480,"ID":3027,"Mass":2999.726},{"Name":"player_4000,4000","X":4000,"Y":4000,"ARGBColor":-16744448,"ID":3028,"Mass":3049.7239},{"Name":"player_4000,5000","X":4000,"Y":5000,"ARGBColor":-16711681,"ID":3029,"Mass":2999.726},{"Name":"player_5000,0","X":5000,"Y":0,"ARGBColor":-16777216,"ID":3030,"Mass":2999.726},{"Name":"player_5000,1000","X":5000,"Y":1000,"ARGBColor":-657956,"ID":3031,"Mass":2999.726},{"Name":"player_5000,2000","X":5000,"Y":2000,"ARGBColor":-3308225,"ID":3032,"Mass":2999.726},{"Name":"player_5000,3000","X":5000,"Y":3000,"ARGBColor":-16777088,"ID":3033,"Mass":2999.726},{"Name":"player_5000,4000","X":5000,"Y":4000,"ARGBColor":-2987746,"ID":3034,"Mass":2999.726},{"Name":"player_5000,5000","X":5000,"Y":5000,"ARGBColor":-65536,"ID":3035,"Mass":2999.726}]
         ///   </para>
         /// </summary>
+        /// TO UPDATE PLAYERS LIST
         public const string CMD_Update_Players = "{Command Players}";
 
         /// <summary>

@@ -9,7 +9,7 @@ namespace AgarioModels
 {
     public class GameObject
     {
-        int ID;
+        public int ID;
 
         int ARGBcolor;
 

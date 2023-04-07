@@ -22,6 +22,8 @@ namespace AgarioModels
 
         public World()
         {
+            players = new Dictionary<long, Player>();
+            foods = new Dictionary<long, Food>();
             //this.logger = logger;
         }
     }
