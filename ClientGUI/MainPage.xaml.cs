@@ -71,6 +71,13 @@ namespace ClientGUI
             //networking.Send("{Command Player Object}");
             // or ???????????
             //client.Send("{Command Player Object}");
+
+            // ask to start the game
+            String message = String.Format(Protocols.CMD_Start_Game, "Jim");
+            networking.Send(message);
+
+            // or ?????
+            // client.Send(message);
         }
 
         private void OnDisconnect(Networking networking)
@@ -94,6 +101,31 @@ namespace ClientGUI
                         drawable.world.foods.Add(food.ID, food);
                         food.position.X = food.X;
                         food.position.Y = food.Y;
+                    }
+                }
+            }
+
+            // {Command Players}
+            else if (message.Contains(Protocols.CMD_Update_Players))
+            {
+                string playersList = message.Substring(17);
+
+                HashSet<Player> players = JsonSerializer.Deserialize<HashSet<Player>>(playersList);
+
+                foreach (Player player in players)
+                {
+                    if (!drawable.world.players.ContainsValue(player))
+                    {
+                        drawable.world.players.Add(player.ID, player);
+                        player.position.X = player.X;
+                        player.position.Y = player.Y;
+                    }
+
+                    else
+                    {
+                        // does it update on its own??
+                        player.position.X = player.X;
+                        player.position.Y = player.Y;
                     }
                 }
             }

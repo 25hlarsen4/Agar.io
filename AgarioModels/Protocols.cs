@@ -21,7 +21,7 @@ namespace AgarioModels
         ///     Example: {Command Player Object}5
         ///   </para>
         /// </summary>
-        /// SENT TO THE PLAYER TO GIVE THEM THEIR ID?
+        /// SENT TO THE PLAYER TO GIVE THEM THEIR ID so the game knows who to follow?
         public const string CMD_Player_Object  = "{Command Player Object}";
 
         /// <summary>

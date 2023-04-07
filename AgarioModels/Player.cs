@@ -8,6 +8,6 @@ namespace AgarioModels
 {
     public class Player : GameObject
     {
-        string name;
+        public string Name { get; set; }
     }
 }
