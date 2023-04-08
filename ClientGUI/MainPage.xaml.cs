@@ -13,6 +13,9 @@ namespace ClientGUI
         Drawable drawable;
         Networking client;
 
+        Point mousePosition;
+        DateTime startTime;
+
         public MainPage()
         {
             InitializeComponent();
@@ -46,6 +49,7 @@ namespace ClientGUI
                 System.Timers.Timer timer = new System.Timers.Timer(33);
                 timer.Elapsed += TickEvent;
                 timer.Start();
+                startTime = DateTime.Now;
             } catch
             {
                 await DisplayAlert("Alert", "Unable to connect :(", "OK");
@@ -58,19 +62,26 @@ namespace ClientGUI
         }
 
         private void PointerChanged(object sender, PointerEventArgs e)
-        {
-            //// Position inside window
-            //Point windowPosition = (Point) e.GetPosition(null);
-            //float xPos = (float) windowPosition.X;
-            //float yPos = (float) windowPosition.Y;
-            //ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
+        { 
+            if ((DateTime.Now - startTime).TotalMilliseconds > 300 ) 
+            {
+                // Position inside window
+                Point windowPosition = (Point)e.GetPosition(null);
+                float xPos = (float)windowPosition.X;
+                float yPos = (float)windowPosition.Y;
+                ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
 
-            ////// Position relative to the container view
-            ////Point? relativeToContainerPosition = e.GetPosition((View)sender);
+                //// Position relative to the container view
+                //Point? relativeToContainerPosition = e.GetPosition((View)sender);
 
-            //// send move command with this point?
-            //String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
-            //client.Send(moveMessage);
+                // send move command with this point?
+                String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
+                client.Send(moveMessage);
+
+                startTime = DateTime.Now;
+
+                mousePosition = windowPosition;
+            }  
         }
 
         private void ConvertFromScreenToWorld(in float screen_x, in float screen_y,
@@ -88,6 +99,22 @@ namespace ClientGUI
         private void PanUpdated(object sender, EventArgs e)
         {
 
+        }
+
+        private void OnEntryTextChanged(object sender, EventArgs e)
+        {
+            Entry space = (Entry) sender;
+            if (space.Text == " ")
+            {
+                float xPos = (float)mousePosition.X;
+                float yPos = (float)mousePosition.Y;
+                ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
+
+                String splitMessage = String.Format(Protocols.CMD_Split, worldX, worldY);
+                client.Send(splitMessage);
+            }
+
+            space.Text = "";
         }
 
         private void TickEvent(Object source, ElapsedEventArgs e)
@@ -202,12 +229,16 @@ namespace ClientGUI
 
             //    foreach (int id in IDs)
             //    {
-            //        if (drawable.world.players.Keys.Contains(id))
+            //        lock (drawable.world.players)
             //        {
-            //            drawable.world.players.Remove(id);
+            //            if (drawable.world.players.Keys.Contains(id))
+            //            {
+            //                drawable.world.players.Remove(id);
+            //            }
             //        }
             //    }
             //}
+
 
             //// {Command Eaten Food}[2701,2546,515,1484,2221,240,1378,1124,1906,1949]
             //else if (message.Contains(Protocols.CMD_Eaten_Food))
@@ -229,9 +260,12 @@ namespace ClientGUI
 
             //    foreach (int id in IDs)
             //    {
-            //        if (drawable.world.foods.Keys.Contains(id))
+            //        lock (drawable.world.foods.Keys)
             //        {
-            //            drawable.world.foods.Remove(id);
+            //            if (drawable.world.foods.Keys.Contains(id))
+            //            {
+            //                drawable.world.foods.Remove(id);
+            //            }
             //        }
             //    }
             //}
