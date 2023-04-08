@@ -33,17 +33,23 @@ namespace ClientGUI
             //timer.Start();
         }
 
-        private void OnNameEntryCompleted(object sender, EventArgs e)
+        private async void OnNameEntryCompleted(object sender, EventArgs e)
         {
             WelcomeScreen.IsVisible = false;
             GameScreen.IsVisible = true;
 
-            client.Connect(ServerEntry.Text, 11000);
-            client.ClientAwaitMessagesAsync();
+            try
+            {
+                client.Connect(ServerEntry.Text, 11000);
+                client.ClientAwaitMessagesAsync();
 
-            System.Timers.Timer timer = new System.Timers.Timer(33);
-            timer.Elapsed += TickEvent;
-            timer.Start();
+                System.Timers.Timer timer = new System.Timers.Timer(33);
+                timer.Elapsed += TickEvent;
+                timer.Start();
+            } catch
+            {
+                await DisplayAlert("Alert", "Unable to connect :(", "OK");
+            }
         }
 
         private void OnServerEntryCompleted(object sender, EventArgs e)

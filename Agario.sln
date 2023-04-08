@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AgarioModels", "AgarioModels\AgarioModels.csproj", "{D9D9BA9D-D03B-4ADB-A6A3-AE6B28B6C270}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgarioModels", "AgarioModels\AgarioModels.csproj", "{D9D9BA9D-D03B-4ADB-A6A3-AE6B28B6C270}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientGUI", "ClientGUI\ClientGUI.csproj", "{2F02A5AD-EF01-47B0-BBC7-67183041A4CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientGUI", "ClientGUI\ClientGUI.csproj", "{2F02A5AD-EF01-47B0-BBC7-67183041A4CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileLogger", "FileLogger\FileLogger.csproj", "{37D58A47-0000-4A90-964C-7FA513A1D280}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,6 +25,10 @@ Global
 		{2F02A5AD-EF01-47B0-BBC7-67183041A4CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2F02A5AD-EF01-47B0-BBC7-67183041A4CA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F02A5AD-EF01-47B0-BBC7-67183041A4CA}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{37D58A47-0000-4A90-964C-7FA513A1D280}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37D58A47-0000-4A90-964C-7FA513A1D280}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37D58A47-0000-4A90-964C-7FA513A1D280}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37D58A47-0000-4A90-964C-7FA513A1D280}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
