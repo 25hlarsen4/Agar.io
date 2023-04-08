@@ -1,88 +1,80 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage x:Name="GameScreen"
-             IsVisible="False"
+<ContentPage 
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="ClientGUI.MainPage">
 
-    <ScrollView>
-        <GraphicsView 
-                x:Name="PlaySurface"
-                VerticalOptions="Center"
-                BackgroundColor="Blue"
-                HeightRequest="800"
-                WidthRequest="800">
-            <GraphicsView.GestureRecognizers>
-                <PointerGestureRecognizer PointerMoved="PointerChanged"/>
-                <TapGestureRecognizer Tapped="OnTap"/>
-                <PanGestureRecognizer PanUpdated="PanUpdated"/>
-            </GraphicsView.GestureRecognizers>
-        </GraphicsView>
-    </ScrollView>
+    <StackLayout>
+        <ScrollView
+            x:Name="GameScreen"
+            IsVisible="False">
+            <GraphicsView 
+                    x:Name="PlaySurface"
+                    IsVisible="True"
+                    VerticalOptions="Center"
+                    BackgroundColor="Blue"
+                    HeightRequest="800"
+                    WidthRequest="800">
+                <GraphicsView.GestureRecognizers>
+                    <PointerGestureRecognizer PointerMoved="PointerChanged"/>
+                    <TapGestureRecognizer Tapped="OnTap"/>
+                    <PanGestureRecognizer PanUpdated="PanUpdated"/>
+                </GraphicsView.GestureRecognizers>
+            </GraphicsView>
+        </ScrollView>
 
-</ContentPage>    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-<!--<ContentPage x:Name="WelcomeScreen"
-             IsVisible="True"
-             xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ClientGUI.MainPage">
 
-    <ScrollView>
-        <VerticalStackLayout
+
+        <ScrollView
+            x:Name="WelcomeScreen"
+            IsVisible="True">
+            <VerticalStackLayout
             Spacing="25"
             Padding="30,0"
             VerticalOptions="Center">
 
-            <HorizontalStackLayout
+                <HorizontalStackLayout
             Spacing="25"
             Padding="30,0"
             VerticalOptions="Center">
 
-                <Label
+                    <Label
                 x:Name="test"
                 Text="Player Name:"
                 SemanticProperties.HeadingLevel="Level1"
                 FontSize="15"
                 HorizontalOptions="Center" />
 
-                <Editor x:Name="NameEntry"
+                    <Entry x:Name="NameEntry"
                        MinimumWidthRequest="200"
                     Completed="OnNameEntryCompleted"
                    />
 
-            </HorizontalStackLayout>
+                </HorizontalStackLayout>
 
 
 
-            <HorizontalStackLayout
+                <HorizontalStackLayout
             Spacing="25"
             Padding="30,0"
             VerticalOptions="Center">
 
-                <Label
+                    <Label
                 Text="Server:"
                 SemanticProperties.HeadingLevel="Level1"
                 FontSize="15"
                 HorizontalOptions="Center" />
 
-                <Editor x:Name="ServerEntry"
+                    <Entry x:Name="ServerEntry"
+                            Text="localhost"
                        MinimumWidthRequest="200"
                     Completed="OnServerEntryCompleted"
                    />
 
-            </HorizontalStackLayout>
+                </HorizontalStackLayout>
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </StackLayout>
 
-</ContentPage>-->
+</ContentPage>
