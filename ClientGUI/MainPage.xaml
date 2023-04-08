@@ -9,29 +9,62 @@
             x:Name="GameScreen"
             IsVisible="False">
 
-            <StackLayout>
+            <HorizontalStackLayout>
 
-                <GraphicsView 
+                <Border Stroke="	#000000"
+                StrokeThickness="1"
+                StrokeShape="Rectangle"
+                Padding="16,8"
+                HorizontalOptions="Center">
+                    
+                    <GraphicsView 
                     x:Name="PlaySurface"
                     IsVisible="True"
                     VerticalOptions="Center"
                     BackgroundColor="Blue"
                     HeightRequest="800"
                     WidthRequest="800">
-                <GraphicsView.GestureRecognizers>
-                    <PointerGestureRecognizer PointerMoved="PointerChanged"/>
-                    <TapGestureRecognizer Tapped="OnTap"/>
-                    <PanGestureRecognizer PanUpdated="PanUpdated"/>
-                </GraphicsView.GestureRecognizers>
-            </GraphicsView>
+                        <GraphicsView.GestureRecognizers>
+                            <PointerGestureRecognizer PointerMoved="PointerChanged"/>
+                            <TapGestureRecognizer Tapped="OnTap"/>
+                            <PanGestureRecognizer PanUpdated="PanUpdated"/>
+                        </GraphicsView.GestureRecognizers>
+                    </GraphicsView>
 
-            <Entry x:Name="SpaceBarEntry"
+                </Border>
+
+                <VerticalStackLayout>
+
+                    <Label
+                        x:Name="FoodLabel"
+                        Text="Food: "
+                        SemanticProperties.HeadingLevel="Level1"
+                        FontSize="10"
+                        HorizontalOptions="Center" />
+
+                    <Label
+                        x:Name="PositionLabel"
+                        Text="Position: "
+                        SemanticProperties.HeadingLevel="Level1"
+                        FontSize="10"
+                        HorizontalOptions="Center" />
+
+                    <Label
+                        x:Name="MassLabel"
+                        Text="Mass: "
+                        SemanticProperties.HeadingLevel="Level1"
+                        FontSize="10"
+                        HorizontalOptions="Center" />
+
+                    <Entry x:Name="SpaceBarEntry"
                        MinimumWidthRequest="1"
                    Focused="True"
                    TextChanged="OnEntryTextChanged"
                    />
 
-            </StackLayout>
+                </VerticalStackLayout>
+
+            </HorizontalStackLayout>
         </ScrollView>
 
 

@@ -16,6 +16,8 @@ namespace ClientGUI
         Point mousePosition;
         DateTime startTime;
 
+        Player thisPlayer;
+
         public MainPage()
         {
             InitializeComponent();
@@ -114,7 +116,7 @@ namespace ClientGUI
                 client.Send(splitMessage);
             }
 
-            space.Text = "";
+            Dispatcher.Dispatch(() => { space.Text = ""; });
         }
 
         private void TickEvent(Object source, ElapsedEventArgs e)
@@ -122,20 +124,24 @@ namespace ClientGUI
             // redraw the world
             //Debug.WriteLine("redrawing");
             PlaySurface.Invalidate();
+
+            Dispatcher.Dispatch(() => { FoodLabel.Text = "Food: " + drawable.world.foods.Count; });
+            Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + thisPlayer.X + ", " + thisPlayer.Y; });
+            Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + thisPlayer.Mass; });
         }
 
         private void OnConnect(Networking networking)
         {
-            //////networking.Send("{Command Player Object}");
-            ////// or ???????????
-            //////client.Send("{Command Player Object}");
+            ////networking.Send("{Command Player Object}");
+            //// or ???????????
+            ////client.Send("{Command Player Object}");
 
-            ////// ask to start the game
-            //String message = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
-            ////networking.Send(message);
+            //// ask to start the game
+            String message = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
+            //networking.Send(message);
 
-            ////// or ?????
-            //client.Send(message);
+            //// or ?????
+            client.Send(message);
         }
 
         private void OnDisconnect(Networking networking)
@@ -143,7 +149,7 @@ namespace ClientGUI
 
         }
 
-        private void OnMessageReceived(Networking networking, string message)
+        private async void OnMessageReceived(Networking networking, string message)
         {
             // {Command Food}
             if (message.Contains(Protocols.CMD_Food))
@@ -167,6 +173,20 @@ namespace ClientGUI
                 }
 
                 PlaySurface.Invalidate();
+            }
+
+            // {Command Player Object}5, lets the client know the game has started
+            else if (message.Contains(Protocols.CMD_Player_Object))
+            {
+                string id = message.Substring(23);
+                int.TryParse(id, out int result);
+                long longID = (long)result;
+                drawable.world.players.TryGetValue(longID, out Player player);
+                thisPlayer = player;
+
+                // link the client id to the player id so the server knows which player to update when it gets
+                // move requests from this client
+                client.ID = id;
             }
 
             // {Command Players}
@@ -209,35 +229,56 @@ namespace ClientGUI
             //// testing displaying the food first:
 
 
-            //// {Command Dead Players}[5,10,20,30,16,121,...]
-            //else if (message.Contains(Protocols.CMD_Dead_Players))
-            //{
-            //    // this will be [5,10,20,30,16,121,...]
-            //    string deadPlayerIDs = message.Substring(22);
-            //    deadPlayerIDs = deadPlayerIDs.Replace("[", String.Empty);
-            //    deadPlayerIDs = deadPlayerIDs.Replace("]", String.Empty);
-            //    string[] idStrings = deadPlayerIDs.Split(',');
+            // {Command Dead Players}[5,10,20,30,16,121,...]
+            else if (message.Contains(Protocols.CMD_Dead_Players))
+            {
+                // this will be [5,10,20,30,16,121,...]
+                string deadPlayerIDs = message.Substring(22);
+                deadPlayerIDs = deadPlayerIDs.Replace("[", String.Empty);
+                deadPlayerIDs = deadPlayerIDs.Replace("]", String.Empty);
+                string[] idStrings = deadPlayerIDs.Split(',');
 
-            //    List<int> IDs = new List<int>();
-            //    foreach (string idString in idStrings)
-            //    {
-            //        if (int.TryParse(idString, out int ID))
-            //        {
-            //            IDs.Add(ID);
-            //        }
-            //    }
+                List<int> IDs = new List<int>();
+                foreach (string idString in idStrings)
+                {
+                    if (int.TryParse(idString, out int ID))
+                    {
+                        IDs.Add(ID);
+                    }
+                }
 
-            //    foreach (int id in IDs)
-            //    {
-            //        lock (drawable.world.players)
-            //        {
-            //            if (drawable.world.players.Keys.Contains(id))
-            //            {
-            //                drawable.world.players.Remove(id);
-            //            }
-            //        }
-            //    }
-            //}
+                foreach (int id in IDs)
+                {
+                    bool wantsToPlayAgain = false;
+                    bool thisPlayerDead = false;
+
+                    if (id == thisPlayer.ID)
+                    {
+                        thisPlayerDead = true;
+                        wantsToPlayAgain = await DisplayAlert("You died!", "Do you want to play again?", "Yes", "No");
+                    }
+
+                    lock (drawable.world.players)
+                    {
+                        if (drawable.world.players.Keys.Contains(id))
+                        {
+                            drawable.world.players.Remove(id);
+                        }
+                    }
+
+                    if (wantsToPlayAgain)
+                    {
+                        GameScreen.IsVisible = false;
+                        WelcomeScreen.IsVisible = true;
+                    }
+
+                    if (thisPlayerDead && !wantsToPlayAgain)
+                    {
+                        client.Disconnect();
+                        // what happens now?
+                    }
+                }
+            }
 
 
             //// {Command Eaten Food}[2701,2546,515,1484,2221,240,1378,1124,1906,1949]
