@@ -50,10 +50,10 @@ namespace ClientGUI
         private void ConvertFromWorldToScreen(in float world_x, in float world_y, in float world_w, in float world_h,
                                                     out int screen_x, out int screen_y, out int screen_w, out int screen_h)
         {
-            screen_x = (int)(world_x / 1000.0F * 800);
-            screen_y = (int)(world_y / 1000.0F * 800);
-            screen_w = (int)(world_w / 1000.0F * 800);
-            screen_h = (int)(world_h / 1000.0F * 800);
+            screen_x = (int)(world_x / 1500.0F * 800);
+            screen_y = (int)(world_y / 1500.0F * 800);
+            screen_w = (int)(world_w / 1500.0F * 800);
+            screen_h = (int)(world_h / 1500.0F * 800);
         }
     }
 }

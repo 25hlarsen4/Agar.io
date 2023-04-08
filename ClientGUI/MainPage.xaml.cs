@@ -59,18 +59,18 @@ namespace ClientGUI
 
         private void PointerChanged(object sender, PointerEventArgs e)
         {
-            // Position inside window
-            Point windowPosition = (Point) e.GetPosition(null);
-            float xPos = (float) windowPosition.X;
-            float yPos = (float) windowPosition.Y;
-            ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
+            //// Position inside window
+            //Point windowPosition = (Point) e.GetPosition(null);
+            //float xPos = (float) windowPosition.X;
+            //float yPos = (float) windowPosition.Y;
+            //ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
 
-            //// Position relative to the container view
-            //Point? relativeToContainerPosition = e.GetPosition((View)sender);
+            ////// Position relative to the container view
+            ////Point? relativeToContainerPosition = e.GetPosition((View)sender);
 
-            // send move command with this point?
-            String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
-            client.Send(moveMessage);
+            //// send move command with this point?
+            //String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
+            //client.Send(moveMessage);
         }
 
         private void ConvertFromScreenToWorld(in float screen_x, in float screen_y,
@@ -99,16 +99,16 @@ namespace ClientGUI
 
         private void OnConnect(Networking networking)
         {
-            ////networking.Send("{Command Player Object}");
-            //// or ???????????
-            ////client.Send("{Command Player Object}");
+            //////networking.Send("{Command Player Object}");
+            ////// or ???????????
+            //////client.Send("{Command Player Object}");
 
-            //// ask to start the game
-            String message = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
-            //networking.Send(message);
+            ////// ask to start the game
+            //String message = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
+            ////networking.Send(message);
 
-            //// or ?????
-            client.Send(message);
+            ////// or ?????
+            //client.Send(message);
         }
 
         private void OnDisconnect(Networking networking)
@@ -128,37 +128,50 @@ namespace ClientGUI
 
                 foreach (Food food in foods)
                 {
-                    if (!drawable.world.foods.ContainsValue(food))
+                    lock (drawable.world.foods)
                     {
-                        drawable.world.foods.Add(food.ID, food);
-                        food.position.X = food.X;
-                        food.position.Y = food.Y;
-                    }
+                        if (!drawable.world.foods.ContainsValue(food))
+                        {
+                            drawable.world.foods.Add(food.ID, food);
+                            food.position.X = food.X;
+                            food.position.Y = food.Y;
+                        }
+                    }  
                 }
+
+                PlaySurface.Invalidate();
             }
 
             // {Command Players}
             else if (message.Contains(Protocols.CMD_Update_Players))
             {
-                Debug.WriteLine("players updated");
+                //Debug.WriteLine("players updated");
                 string playersList = message.Substring(17);
-
+                Debug.WriteLine(playersList);
                 HashSet<Player> players = JsonSerializer.Deserialize<HashSet<Player>>(playersList);
 
                 foreach (Player player in players)
                 {
-                    if (!drawable.world.players.ContainsValue(player))
+                    lock (drawable.world.players)
                     {
-                        drawable.world.players.Add(player.ID, player);
-                        player.position.X = player.X;
-                        player.position.Y = player.Y;
-                    }
+                        if (!drawable.world.players.ContainsKey(player.ID))
+                        {
+                            Debug.WriteLine("trying to add");
+                            drawable.world.players.Add(player.ID, player);
+                            //Debug.WriteLine("successfully added");
+                            player.position.X = player.X;
+                            player.position.Y = player.Y;
+                        }
 
-                    else
-                    {
-                        // does it update on its own??
-                        player.position.X = player.X;
-                        player.position.Y = player.Y;
+                        else
+                        {
+                            // does it update on its own??
+                            Debug.WriteLine("trying to update");
+                            drawable.world.players.Remove(player.ID);
+                            drawable.world.players.Add(player.ID, player);
+                            player.position.X = player.X;
+                            player.position.Y = player.Y;
+                        }
                     }
                 }
             }
