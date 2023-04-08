@@ -2,6 +2,8 @@
 using Communications;
 using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json;
+using System.Diagnostics;
+using System.Timers;
 
 namespace ClientGUI
 {
@@ -23,31 +25,53 @@ namespace ClientGUI
 
 
 
-            client.Connect("localhost", 11000);
+            //client.Connect("localhost", 11000);
+            //client.ClientAwaitMessagesAsync();
+
+            //System.Timers.Timer timer = new System.Timers.Timer(33);
+            //timer.Elapsed += TickEvent;
+            //timer.Start();
+        }
+
+        private void OnNameEntryCompleted(object sender, EventArgs e)
+        {
+            WelcomeScreen.IsVisible = false;
+            GameScreen.IsVisible = true;
+
+            client.Connect(ServerEntry.Text, 11000);
             client.ClientAwaitMessagesAsync();
 
-            IDispatcherTimer timer = Dispatcher.CreateTimer();
-            TimeSpan span = TimeSpan.FromSeconds(30);
-            timer.Interval = span;
-            timer.Tick += (s, e) => TickEvent();
+            System.Timers.Timer timer = new System.Timers.Timer(33);
+            timer.Elapsed += TickEvent;
             timer.Start();
         }
 
-        //private void OnNameEntryCompleted(object sender, EventArgs e)
-        //{
-        //    client.Connect(ServerEntry.Text, 11000);
-        //    client.ClientAwaitMessagesAsync();
-
-        //    IDispatcherTimer timer = Dispatcher.CreateTimer();
-        //    TimeSpan span = TimeSpan.FromSeconds(30);
-        //    timer.Interval = span;
-        //    timer.Tick += (s, e) => TickEvent();
-        //    timer.Start();
-        //}
-
-        private void PointerChanged(object sender, EventArgs e)
+        private void OnServerEntryCompleted(object sender, EventArgs e)
         {
 
+        }
+
+        private void PointerChanged(object sender, PointerEventArgs e)
+        {
+            // Position inside window
+            Point windowPosition = (Point) e.GetPosition(null);
+            float xPos = (float) windowPosition.X;
+            float yPos = (float) windowPosition.Y;
+            ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
+
+            //// Position relative to the container view
+            //Point? relativeToContainerPosition = e.GetPosition((View)sender);
+
+            // send move command with this point?
+            String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
+            client.Send(moveMessage);
+        }
+
+        private void ConvertFromScreenToWorld(in float screen_x, in float screen_y,
+                                            out int world_x, out int world_y)
+        {
+            world_x = (int)(screen_x / 800 * 1000.0F);
+            world_y = (int)(screen_y / 800 * 1000.0F);
         }
 
         private void OnTap(object sender, EventArgs e)
@@ -60,24 +84,25 @@ namespace ClientGUI
 
         }
 
-        private void TickEvent()
+        private void TickEvent(Object source, ElapsedEventArgs e)
         {
             // redraw the world
+            //Debug.WriteLine("redrawing");
             PlaySurface.Invalidate();
         }
 
         private void OnConnect(Networking networking)
         {
-            //networking.Send("{Command Player Object}");
-            // or ???????????
-            //client.Send("{Command Player Object}");
+            ////networking.Send("{Command Player Object}");
+            //// or ???????????
+            ////client.Send("{Command Player Object}");
 
-            // ask to start the game
-            String message = String.Format(Protocols.CMD_Start_Game, "Jim");
-            networking.Send(message);
+            //// ask to start the game
+            String message = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
+            //networking.Send(message);
 
-            // or ?????
-            // client.Send(message);
+            //// or ?????
+            client.Send(message);
         }
 
         private void OnDisconnect(Networking networking)
@@ -90,6 +115,7 @@ namespace ClientGUI
             // {Command Food}
             if (message.Contains(Protocols.CMD_Food))
             {
+                System.Diagnostics.Debug.WriteLine("got food");
                 string foodList = message.Substring(14);
 
                 HashSet<Food> foods = JsonSerializer.Deserialize<HashSet<Food>>(foodList);
@@ -108,6 +134,7 @@ namespace ClientGUI
             // {Command Players}
             else if (message.Contains(Protocols.CMD_Update_Players))
             {
+                Debug.WriteLine("players updated");
                 string playersList = message.Substring(17);
 
                 HashSet<Player> players = JsonSerializer.Deserialize<HashSet<Player>>(playersList);
@@ -132,63 +159,63 @@ namespace ClientGUI
 
 
 
-            //This is new code to handle other messages but I have it commented out so we can just
-            // testing displaying the food first:
+            ////This is new code to handle other messages but I have it commented out so we can just
+            //// testing displaying the food first:
 
 
-            // {Command Dead Players}[5,10,20,30,16,121,...]
-            else if (message.Contains(Protocols.CMD_Dead_Players))
-            {
-                // this will be [5,10,20,30,16,121,...]
-                string deadPlayerIDs = message.Substring(22);
-                deadPlayerIDs = deadPlayerIDs.Replace("[", String.Empty);
-                deadPlayerIDs = deadPlayerIDs.Replace("]", String.Empty);
-                string[] idStrings = deadPlayerIDs.Split(',');
+            //// {Command Dead Players}[5,10,20,30,16,121,...]
+            //else if (message.Contains(Protocols.CMD_Dead_Players))
+            //{
+            //    // this will be [5,10,20,30,16,121,...]
+            //    string deadPlayerIDs = message.Substring(22);
+            //    deadPlayerIDs = deadPlayerIDs.Replace("[", String.Empty);
+            //    deadPlayerIDs = deadPlayerIDs.Replace("]", String.Empty);
+            //    string[] idStrings = deadPlayerIDs.Split(',');
 
-                List<int> IDs = new List<int>();
-                foreach (string idString in idStrings)
-                {
-                    if (int.TryParse(idString, out int ID))
-                    {
-                        IDs.Add(ID);
-                    }
-                }
+            //    List<int> IDs = new List<int>();
+            //    foreach (string idString in idStrings)
+            //    {
+            //        if (int.TryParse(idString, out int ID))
+            //        {
+            //            IDs.Add(ID);
+            //        }
+            //    }
 
-                foreach (int id in IDs)
-                {
-                    if (drawable.world.players.Keys.Contains(id))
-                    {
-                        drawable.world.players.Remove(id);
-                    }
-                }
-            }
+            //    foreach (int id in IDs)
+            //    {
+            //        if (drawable.world.players.Keys.Contains(id))
+            //        {
+            //            drawable.world.players.Remove(id);
+            //        }
+            //    }
+            //}
 
-            // {Command Eaten Food}[2701,2546,515,1484,2221,240,1378,1124,1906,1949]
-            else if (message.Contains(Protocols.CMD_Eaten_Food))
-            {
-                // this will be [2701,2546,515,1484,2221,240,1378,1124,1906,1949]
-                string eatenFood = message.Substring(20);
-                eatenFood = eatenFood.Replace("[", String.Empty);
-                eatenFood = eatenFood.Replace("]", String.Empty);
-                string[] eatenFoods = eatenFood.Split(',');
+            //// {Command Eaten Food}[2701,2546,515,1484,2221,240,1378,1124,1906,1949]
+            //else if (message.Contains(Protocols.CMD_Eaten_Food))
+            //{
+            //    // this will be [2701,2546,515,1484,2221,240,1378,1124,1906,1949]
+            //    string eatenFood = message.Substring(20);
+            //    eatenFood = eatenFood.Replace("[", String.Empty);
+            //    eatenFood = eatenFood.Replace("]", String.Empty);
+            //    string[] eatenFoods = eatenFood.Split(',');
 
-                List<int> IDs = new List<int>();
-                foreach (string food in eatenFoods)
-                {
-                    if (int.TryParse(food, out int ID))
-                    {
-                        IDs.Add(ID);
-                    }
-                }
+            //    List<int> IDs = new List<int>();
+            //    foreach (string food in eatenFoods)
+            //    {
+            //        if (int.TryParse(food, out int ID))
+            //        {
+            //            IDs.Add(ID);
+            //        }
+            //    }
 
-                foreach (int id in IDs)
-                {
-                    if (drawable.world.foods.Keys.Contains(id))
-                    {
-                        drawable.world.foods.Remove(id);
-                    }
-                }
-            }
+            //    foreach (int id in IDs)
+            //    {
+            //        if (drawable.world.foods.Keys.Contains(id))
+            //        {
+            //            drawable.world.foods.Remove(id);
+            //        }
+            //    }
+            //}
         }
     }
 }
