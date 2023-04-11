@@ -14,8 +14,8 @@ namespace AgarioModels
     {
         //readonly ILogger logger;
 
-        readonly int width = 5000;
-        readonly int height = 5000;
+        public readonly int width = 5000;
+        public readonly int height = 5000;
 
         public Dictionary<long, Player> players;
         public Dictionary<long, Food> foods;

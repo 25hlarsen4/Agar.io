@@ -89,8 +89,8 @@ namespace ClientGUI
         private void ConvertFromScreenToWorld(in float screen_x, in float screen_y,
                                             out int world_x, out int world_y)
         {
-            world_x = (int)(screen_x / 800 * 1000.0F);
-            world_y = (int)(screen_y / 800 * 1000.0F);
+            world_x = (int)(screen_x / 800 * drawable.world.width);
+            world_y = (int)(screen_y / 800 * drawable.world.height);
         }
 
         private void OnTap(object sender, EventArgs e)

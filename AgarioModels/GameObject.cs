@@ -10,7 +10,7 @@ namespace AgarioModels
     public class GameObject
     {
 
-        public Vector2 position;
+        public Vector2 position = new Vector2();
 
         public int ID { get; set; }
 
@@ -27,9 +27,19 @@ namespace AgarioModels
            return (float)Math.Sqrt(Mass / float.Pi); 
         }
 
-        public float X { get; set; }
+        public float X
+        {
+            get { return position.X; }
+        }
 
-        public float Y { get; set; }
+        public float Y
+        {
+            get { return position.Y; }
+        }
+
+        //public float X { get; set; }
+
+        //public float Y { get; set; }
 
 
             
