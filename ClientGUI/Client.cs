@@ -1,6 +1,7 @@
 ﻿using AgarioModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -33,11 +34,14 @@ namespace ClientGUI
 
             else
             {
-                currViewPortalWidth = (int)(10 * thisPlayer.getRadius());
+                currViewPortalWidth = (int)(100 * thisPlayer.getRadius());
 
                 int leftBoundary = (int)(thisPlayer.X - (currViewPortalWidth / 2));
+
                 int rightBoundary = (int)(thisPlayer.X + (currViewPortalWidth / 2));
+
                 int bottomBoundary = (int)(thisPlayer.Y + (currViewPortalWidth / 2));
+
                 int topBoundary = (int)(thisPlayer.Y - (currViewPortalWidth / 2));
 
                 // if the object is out of bounds, don't worry about converting or drawing it
@@ -52,25 +56,20 @@ namespace ClientGUI
                 else
                 {
                     int horizOffset = (int)(world_x - leftBoundary);
-                    int widthPercentage = horizOffset / currViewPortalWidth;
+                    double widthPercentage = ((double) horizOffset) / currViewPortalWidth;
 
                     int vertOffset = (int)(world_y - topBoundary);
-                    int heightPercentage = vertOffset / currViewPortalWidth;
+                    double heightPercentage = ((double)vertOffset) / currViewPortalWidth;
 
-                    screen_x = widthPercentage * 800;
-                    screen_y = heightPercentage * 800;
+                    screen_x = (int)(widthPercentage * 800);
+                    screen_y = (int)(heightPercentage * 800);
 
-                    int radiusPercentage = (int)(world_radius / currViewPortalWidth);
-                    screen_radius = radiusPercentage * 800;
+                    double radiusPercentage = ((double)world_radius / currViewPortalWidth);
+                    screen_radius = (int)(radiusPercentage * 800);
 
                     return true;
                 }
             }
-
-            //screen_x = (int)(world_x / world.width * 800);
-            //screen_y = (int)(world_y / world.height * 800);
-            //screen_radius = (int)(world_radius / world.width * 800);
-
         }
     }
 }

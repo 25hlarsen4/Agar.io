@@ -46,7 +46,7 @@
                         x:Name="PositionLabel"
                         Text="Position: "
                         SemanticProperties.HeadingLevel="Level1"
-                        FontSize="10"
+                        FontSize="15"
                         HorizontalOptions="Center" />
 
                     <Label
@@ -58,7 +58,6 @@
 
                     <Entry x:Name="SpaceBarEntry"
                        MinimumWidthRequest="1"
-                   Focused="True"
                    TextChanged="OnEntryTextChanged"
                    />
 

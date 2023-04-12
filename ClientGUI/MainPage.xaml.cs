@@ -128,9 +128,11 @@ namespace ClientGUI
             //Debug.WriteLine("redrawing");
             PlaySurface.Invalidate();
 
-            Dispatcher.Dispatch(() => { FoodLabel.Text = "Food: " + drawable.client.world.foods.Count; });
-            Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + drawable.client.thisPlayer.X + ", " + drawable.client.thisPlayer.Y; });
-            Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + drawable.client.thisPlayer.Mass; });
+            // Don't forget to check for nulls here!!
+            //Dispatcher.Dispatch(() => { FoodLabel.Text = "Food: " + drawable.client.world.foods.Count; });
+            //Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + drawable.client.thisPlayer.X + ", " + drawable.client.thisPlayer.Y; });
+            Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + mousePosition; });
+            //Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + drawable.client.thisPlayer.Mass; });
         }
 
         private void OnConnect(Networking networking)
@@ -169,13 +171,11 @@ namespace ClientGUI
                         if (!drawable.client.world.foods.ContainsValue(food))
                         {
                             drawable.client.world.foods.Add(food.ID, food);
-                            food.position.X = food.X;
-                            food.position.Y = food.Y;
+                            //food.position.X = food.X;
+                            //food.position.Y = food.Y;
                         }
                     }  
                 }
-
-                PlaySurface.Invalidate();
             }
 
             // {Command Player Object}5, lets the client know the game has started
@@ -185,15 +185,16 @@ namespace ClientGUI
                 int.TryParse(id, out int result);
                 long longID = (long)result;
 
-                // THIS IS WRONG
-                //drawable.world.players.TryGetValue(longID, out Player player);
-                //thisPlayer = player;
-
                 // link the client id to the player id so the server knows which player to update when it gets
                 // move requests from this client
                 channel.ID = id;
 
                 drawable.client.thisPlayersID = longID;
+                Debug.WriteLine("this player's id: " + drawable.client.thisPlayersID);
+
+                drawable.client.world.players.TryGetValue(longID, out Player player);
+                drawable.client.thisPlayer = player;
+                Debug.WriteLine("thisPlayer has been set, id is: " + drawable.client.thisPlayer.ID);
             }
 
             // {Command Players}
@@ -201,7 +202,7 @@ namespace ClientGUI
             {
                 //Debug.WriteLine("players updated");
                 string playersList = message.Substring(17);
-                Debug.WriteLine(playersList);
+                //Debug.WriteLine(playersList);
                 HashSet<Player> players = JsonSerializer.Deserialize<HashSet<Player>>(playersList);
 
                 foreach (Player player in players)
@@ -210,36 +211,25 @@ namespace ClientGUI
                     {
                         if (!drawable.client.world.players.ContainsKey(player.ID))
                         {
-                            Debug.WriteLine("trying to add");
+                            Debug.WriteLine(player.ID);
                             drawable.client.world.players.Add(player.ID, player);
+                            Debug.WriteLine("player x: " + player.X + ", player y: " + player.Y);
                             //Debug.WriteLine("successfully added");
-                            player.position.X = player.X;
-                            player.position.Y = player.Y;
-
-                            // if the list didn't contain the player's ID and it matches thisPlayersID, we can set thisPlayer
-                            if (player.ID == drawable.client.thisPlayersID)
-                            {
-                                drawable.client.thisPlayer = player;
-                            }
+                            //player.position.X = player.X;
+                            //player.position.Y = player.Y;
                         }
 
                         else
                         {
                             // does it update on its own??
-                            Debug.WriteLine("trying to update");
                             drawable.client.world.players.Remove(player.ID);
                             drawable.client.world.players.Add(player.ID, player);
-                            player.position.X = player.X;
-                            player.position.Y = player.Y;
+                            //player.position.X = player.X;
+                            //player.position.Y = player.Y;
                         }
                     }
                 }
             }
-
-
-
-            ////This is new code to handle other messages but I have it commented out so we can just
-            //// testing displaying the food first:
 
 
             // {Command Dead Players}[5,10,20,30,16,121,...]
