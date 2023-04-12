@@ -8,6 +8,10 @@ namespace AgarioModels
 {
     public class Player : GameObject
     {
+        public Player(int ID, int ARGBColor, float Mass, float X, float Y) : base(ID, ARGBColor, Mass, X, Y)
+        {
+        }
+
         public string Name { get; set; }
     }
 }

@@ -30,6 +30,14 @@ namespace ClientGUI
                     canvas.StrokeSize = 2;
                     canvas.FillColor = color;
                     canvas.FillCircle(screen_x, screen_y, screen_radius);
+
+                    // draw the player name
+                    canvas.FontColor = Colors.Black;
+                    canvas.FontSize = (float)(4 * Math.Sqrt(player.getRadius()));
+
+                    canvas.Font = Microsoft.Maui.Graphics.Font.Default;
+                    //Debug.WriteLine(player.Name);
+                    canvas.DrawString(player.Name, screen_x - 100, (screen_y - 50 ), 200, 100, HorizontalAlignment.Center, VerticalAlignment.Center);
                 }
             }
 

@@ -10,6 +10,17 @@ namespace AgarioModels
 {
     public class GameObject
     {
+        [JsonConstructor]
+        public GameObject(int ID, int ARGBColor, float Mass, float X, float Y) 
+        { 
+            this.ID = ID;
+            this.ARGBColor = ARGBColor;
+            this.Mass = Mass;
+            this.X = X;
+            this.Y = Y;
+        }
+
+
         [JsonIgnore]
         public Vector2 position { get; set; }
 
@@ -23,14 +34,14 @@ namespace AgarioModels
         {
             //get { return position.X; }
             //set { }
-            get; set;
+            get; private set;
         }
 
         public float Y
         {
             //get { return position.Y; }
             //set { }
-            get; set;
+            get; private set;
         }
         public float getRadius()
         {

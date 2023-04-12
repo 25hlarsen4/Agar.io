@@ -8,5 +8,8 @@ namespace AgarioModels
 {
     public class Food : GameObject
     {
+        public Food(int ID, int ARGBColor, float Mass, float X, float Y) : base(ID, ARGBColor, Mass, X, Y)
+        {
+        }
     }
 }

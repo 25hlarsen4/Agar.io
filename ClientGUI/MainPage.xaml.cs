@@ -179,11 +179,18 @@ namespace ClientGUI
             //Debug.WriteLine("redrawing");
             PlaySurface.Invalidate();
 
-            // Don't forget to check for nulls here!!
-            //Dispatcher.Dispatch(() => { FoodLabel.Text = "Food: " + drawable.client.world.foods.Count; });
-            //Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + drawable.client.thisPlayer.X + ", " + drawable.client.thisPlayer.Y; });
-            //Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + mousePosition; });
-            //Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + drawable.client.thisPlayer.Mass; });
+            if (drawable.client.world.foods != null && drawable.client.thisPlayer != null)
+            {
+                try
+                {
+                    Dispatcher.Dispatch(() => { FoodLabel.Text = "Food: " + drawable.client.world.foods.Count; });
+                    Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + drawable.client.thisPlayer.X + ", " + drawable.client.thisPlayer.Y; });
+                    Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + drawable.client.thisPlayer.Mass; });
+                } catch
+                {
+
+                }
+            }
 
             if (drawable.client.thisPlayer != null && (drawable.client.thisPlayer.X != mousePosition.X || drawable.client.thisPlayer.Y != mousePosition.Y))
             {
@@ -220,7 +227,6 @@ namespace ClientGUI
             // {Command Food}
             if (message.Contains(Protocols.CMD_Food))
             {
-                System.Diagnostics.Debug.WriteLine("got food");
                 string foodList = message.Substring(14);
 
                 HashSet<Food> foods = JsonSerializer.Deserialize<HashSet<Food>>(foodList);
