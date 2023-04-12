@@ -34,9 +34,10 @@ namespace ClientGUI
 
             else
             {
-                currViewPortalWidth = (int)(100 * thisPlayer.getRadius());
+                currViewPortalWidth = (int)(130 * Math.Sqrt(thisPlayer.getRadius()));
 
                 int leftBoundary = (int)(thisPlayer.X - (currViewPortalWidth / 2));
+                //Debug.WriteLine(thisPlayer.X);
 
                 int rightBoundary = (int)(thisPlayer.X + (currViewPortalWidth / 2));
 

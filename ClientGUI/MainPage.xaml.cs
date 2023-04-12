@@ -45,6 +45,7 @@ namespace ClientGUI
         {
             WelcomeScreen.IsVisible = false;
             GameScreen.IsVisible = true;
+            SpaceBarEntry.Focus();
 
             try
             {
@@ -244,6 +245,7 @@ namespace ClientGUI
                 Debug.WriteLine("thisPlayer has been set, id is: " + drawable.client.thisPlayer.ID);
             }
 
+
             // {Command Players}
             else if (message.Contains(Protocols.CMD_Update_Players))
             {
@@ -268,6 +270,10 @@ namespace ClientGUI
 
                         else
                         {
+                            if (drawable.client.thisPlayer != null && player.ID == drawable.client.thisPlayer.ID)
+                            {
+                                drawable.client.thisPlayer = player;
+                            }
                             // does it update on its own??
                             drawable.client.world.players.Remove(player.ID);
                             drawable.client.world.players.Add(player.ID, player);
@@ -331,35 +337,35 @@ namespace ClientGUI
             }
 
 
-            //// {Command Eaten Food}[2701,2546,515,1484,2221,240,1378,1124,1906,1949]
-            //else if (message.Contains(Protocols.CMD_Eaten_Food))
-            //{
-            //    // this will be [2701,2546,515,1484,2221,240,1378,1124,1906,1949]
-            //    string eatenFood = message.Substring(20);
-            //    eatenFood = eatenFood.Replace("[", String.Empty);
-            //    eatenFood = eatenFood.Replace("]", String.Empty);
-            //    string[] eatenFoods = eatenFood.Split(',');
+            // {Command Eaten Food}[2701,2546,515,1484,2221,240,1378,1124,1906,1949]
+            else if (message.Contains(Protocols.CMD_Eaten_Food))
+            {
+                // this will be [2701,2546,515,1484,2221,240,1378,1124,1906,1949]
+                string eatenFood = message.Substring(20);
+                eatenFood = eatenFood.Replace("[", String.Empty);
+                eatenFood = eatenFood.Replace("]", String.Empty);
+                string[] eatenFoods = eatenFood.Split(',');
 
-            //    List<int> IDs = new List<int>();
-            //    foreach (string food in eatenFoods)
-            //    {
-            //        if (int.TryParse(food, out int ID))
-            //        {
-            //            IDs.Add(ID);
-            //        }
-            //    }
+                List<int> IDs = new List<int>();
+                foreach (string food in eatenFoods)
+                {
+                    if (int.TryParse(food, out int ID))
+                    {
+                        IDs.Add(ID);
+                    }
+                }
 
-            //    foreach (int id in IDs)
-            //    {
-            //        lock (drawable.world.foods.Keys)
-            //        {
-            //            if (drawable.world.foods.Keys.Contains(id))
-            //            {
-            //                drawable.world.foods.Remove(id);
-            //            }
-            //        }
-            //    }
-            //}
+                foreach (int id in IDs)
+                {
+                    lock (drawable.client.world.foods.Keys)
+                    {
+                        if (drawable.client.world.foods.Keys.Contains(id))
+                        {
+                            drawable.client.world.foods.Remove(id);
+                        }
+                    }
+                }
+            }
         }
     }
 }
