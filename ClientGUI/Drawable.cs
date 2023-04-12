@@ -11,17 +11,18 @@ namespace ClientGUI
 {
     internal class Drawable : IDrawable
     {
-        public World world = new World();
+        // this client stores the world
+        public Client client = new Client();
 
         public void Draw(ICanvas canvas, RectF dirtyRect)
         {
             //HashSet<AgarioModels.Players> players = world.players;
             //HashSet<Food> foods = world.food;
 
-            foreach (Player player in world.players.Values)
+            foreach (Player player in client.world.players.Values)
             {
                 // ConvertFromWorldToScreen
-                ConvertFromWorldToScreen(player.X, player.Y, player.getRadius(),
+                client.ConvertFromWorldToScreen(player.X, player.Y, player.getRadius(),
                     out int screen_x, out int screen_y, out int screen_radius);
 
                 // draw each circle
@@ -32,10 +33,10 @@ namespace ClientGUI
                 canvas.FillCircle(screen_x, screen_y, screen_radius);
             }
 
-            foreach (Food food in world.foods.Values)
+            foreach (Food food in client.world.foods.Values)
             {
                 // ConvertFromWorldToScreen
-                ConvertFromWorldToScreen(food.X, food.Y, food.getRadius(), 
+                client.ConvertFromWorldToScreen(food.X, food.Y, food.getRadius(), 
                     out int screen_x, out int screen_y, out int screen_radius);
 
                 // draw each circle
@@ -45,18 +46,6 @@ namespace ClientGUI
                 //canvas.FillCircle(food.X, food.Y, food.getRadius());
                 canvas.FillCircle(screen_x, screen_y, screen_radius);
             }
-        }
-
-
-        //    worldx             screenx
-        //   ---------     =    ---------
-        //  world width        screen width
-        private void ConvertFromWorldToScreen(in float world_x, in float world_y, in float world_radius,
-                                                    out int screen_x, out int screen_y, out int screen_radius)
-        {
-            screen_x = (int)(world_x / world.width * 800);
-            screen_y = (int)(world_y / world.height * 800);
-            screen_radius = (int)(world_radius / world.width * 800);
         }
     }
 }

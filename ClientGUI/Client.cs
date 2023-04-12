@@ -1,0 +1,76 @@
+﻿using AgarioModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ClientGUI
+{
+    internal class Client
+    {
+        public Player thisPlayer;
+        int currViewPortalWidth = 800;
+        public long thisPlayersID;
+
+        public World world = new World();
+
+        //    worldx             screenx
+        //   ---------     =    ---------
+        //  world width        screen width
+        internal bool ConvertFromWorldToScreen(in float world_x, in float world_y, in float world_radius,
+                                                    out int screen_x, out int screen_y, out int screen_radius)
+        {
+            // if not currently playing, don't need to worry about zoomed portal view
+            if (thisPlayer == null)
+            {
+                screen_x = (int)(world_x / world.width * 800);
+                screen_y = (int)(world_y / world.height * 800);
+                screen_radius = (int)(world_radius / world.width * 800);
+
+                return true;
+            }
+
+            else
+            {
+                currViewPortalWidth = (int)(10 * thisPlayer.getRadius());
+
+                int leftBoundary = (int)(thisPlayer.X - (currViewPortalWidth / 2));
+                int rightBoundary = (int)(thisPlayer.X + (currViewPortalWidth / 2));
+                int bottomBoundary = (int)(thisPlayer.Y + (currViewPortalWidth / 2));
+                int topBoundary = (int)(thisPlayer.Y - (currViewPortalWidth / 2));
+
+                // if the object is out of bounds, don't worry about converting or drawing it
+                if (world_x < leftBoundary || world_x > rightBoundary || world_y > bottomBoundary || world_y < topBoundary)
+                {
+                    screen_x = 0;
+                    screen_y = 0;
+                    screen_radius = 0;
+                    return false;
+                }
+
+                else
+                {
+                    int horizOffset = (int)(world_x - leftBoundary);
+                    int widthPercentage = horizOffset / currViewPortalWidth;
+
+                    int vertOffset = (int)(world_y - topBoundary);
+                    int heightPercentage = vertOffset / currViewPortalWidth;
+
+                    screen_x = widthPercentage * 800;
+                    screen_y = heightPercentage * 800;
+
+                    int radiusPercentage = (int)(world_radius / currViewPortalWidth);
+                    screen_radius = radiusPercentage * 800;
+
+                    return true;
+                }
+            }
+
+            //screen_x = (int)(world_x / world.width * 800);
+            //screen_y = (int)(world_y / world.height * 800);
+            //screen_radius = (int)(world_radius / world.width * 800);
+
+        }
+    }
+}

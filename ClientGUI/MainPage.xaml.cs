@@ -9,23 +9,26 @@ namespace ClientGUI
 {
     public partial class MainPage : ContentPage
     {
-        //World world;
         Drawable drawable;
-        Networking client;
+        Networking channel;
 
         Point mousePosition;
         DateTime startTime;
 
-        Player thisPlayer;
+        //Player thisPlayer;
+        //int currViewPortalWidth = 800;
+        //long thisPlayersID;
 
         public MainPage()
         {
             InitializeComponent();
 
-            //world = new World();
+            // the Drawable stores the Client which stores the world
             drawable = new Drawable();
+
             PlaySurface.Drawable = drawable;
-            client = new Networking(NullLogger.Instance, OnConnect, OnDisconnect, OnMessageReceived, '\n');
+
+            channel = new Networking(NullLogger.Instance, OnConnect, OnDisconnect, OnMessageReceived, '\n');
 
 
 
@@ -45,8 +48,8 @@ namespace ClientGUI
 
             try
             {
-                client.Connect(ServerEntry.Text, 11000);
-                client.ClientAwaitMessagesAsync();
+                channel.Connect(ServerEntry.Text, 11000);
+                channel.ClientAwaitMessagesAsync();
 
                 System.Timers.Timer timer = new System.Timers.Timer(33);
                 timer.Elapsed += TickEvent;
@@ -78,7 +81,7 @@ namespace ClientGUI
 
                 // send move command with this point?
                 String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
-                client.Send(moveMessage);
+                channel.Send(moveMessage);
 
                 startTime = DateTime.Now;
 
@@ -89,8 +92,8 @@ namespace ClientGUI
         private void ConvertFromScreenToWorld(in float screen_x, in float screen_y,
                                             out int world_x, out int world_y)
         {
-            world_x = (int)(screen_x / 800 * drawable.world.width);
-            world_y = (int)(screen_y / 800 * drawable.world.height);
+            world_x = (int)(screen_x / 800 * drawable.client.world.width);
+            world_y = (int)(screen_y / 800 * drawable.client.world.height);
         }
 
         private void OnTap(object sender, EventArgs e)
@@ -113,7 +116,7 @@ namespace ClientGUI
                 ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
 
                 String splitMessage = String.Format(Protocols.CMD_Split, worldX, worldY);
-                client.Send(splitMessage);
+                channel.Send(splitMessage);
             }
 
             Dispatcher.Dispatch(() => { space.Text = ""; });
@@ -125,9 +128,9 @@ namespace ClientGUI
             //Debug.WriteLine("redrawing");
             PlaySurface.Invalidate();
 
-            Dispatcher.Dispatch(() => { FoodLabel.Text = "Food: " + drawable.world.foods.Count; });
-            Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + thisPlayer.X + ", " + thisPlayer.Y; });
-            Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + thisPlayer.Mass; });
+            Dispatcher.Dispatch(() => { FoodLabel.Text = "Food: " + drawable.client.world.foods.Count; });
+            Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + drawable.client.thisPlayer.X + ", " + drawable.client.thisPlayer.Y; });
+            Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + drawable.client.thisPlayer.Mass; });
         }
 
         private void OnConnect(Networking networking)
@@ -141,7 +144,7 @@ namespace ClientGUI
             //networking.Send(message);
 
             //// or ?????
-            client.Send(message);
+            channel.Send(message);
         }
 
         private void OnDisconnect(Networking networking)
@@ -161,11 +164,11 @@ namespace ClientGUI
 
                 foreach (Food food in foods)
                 {
-                    lock (drawable.world.foods)
+                    lock (drawable.client.world.foods)
                     {
-                        if (!drawable.world.foods.ContainsValue(food))
+                        if (!drawable.client.world.foods.ContainsValue(food))
                         {
-                            drawable.world.foods.Add(food.ID, food);
+                            drawable.client.world.foods.Add(food.ID, food);
                             food.position.X = food.X;
                             food.position.Y = food.Y;
                         }
@@ -181,12 +184,16 @@ namespace ClientGUI
                 string id = message.Substring(23);
                 int.TryParse(id, out int result);
                 long longID = (long)result;
-                drawable.world.players.TryGetValue(longID, out Player player);
-                thisPlayer = player;
+
+                // THIS IS WRONG
+                //drawable.world.players.TryGetValue(longID, out Player player);
+                //thisPlayer = player;
 
                 // link the client id to the player id so the server knows which player to update when it gets
                 // move requests from this client
-                client.ID = id;
+                channel.ID = id;
+
+                drawable.client.thisPlayersID = longID;
             }
 
             // {Command Players}
@@ -199,23 +206,29 @@ namespace ClientGUI
 
                 foreach (Player player in players)
                 {
-                    lock (drawable.world.players)
+                    lock (drawable.client.world.players)
                     {
-                        if (!drawable.world.players.ContainsKey(player.ID))
+                        if (!drawable.client.world.players.ContainsKey(player.ID))
                         {
                             Debug.WriteLine("trying to add");
-                            drawable.world.players.Add(player.ID, player);
+                            drawable.client.world.players.Add(player.ID, player);
                             //Debug.WriteLine("successfully added");
                             player.position.X = player.X;
                             player.position.Y = player.Y;
+
+                            // if the list didn't contain the player's ID and it matches thisPlayersID, we can set thisPlayer
+                            if (player.ID == drawable.client.thisPlayersID)
+                            {
+                                drawable.client.thisPlayer = player;
+                            }
                         }
 
                         else
                         {
                             // does it update on its own??
                             Debug.WriteLine("trying to update");
-                            drawable.world.players.Remove(player.ID);
-                            drawable.world.players.Add(player.ID, player);
+                            drawable.client.world.players.Remove(player.ID);
+                            drawable.client.world.players.Add(player.ID, player);
                             player.position.X = player.X;
                             player.position.Y = player.Y;
                         }
@@ -252,17 +265,17 @@ namespace ClientGUI
                     bool wantsToPlayAgain = false;
                     bool thisPlayerDead = false;
 
-                    if (id == thisPlayer.ID)
+                    if (id == drawable.client.thisPlayer.ID)
                     {
                         thisPlayerDead = true;
                         wantsToPlayAgain = await DisplayAlert("You died!", "Do you want to play again?", "Yes", "No");
                     }
 
-                    lock (drawable.world.players)
+                    lock (drawable.client.world.players)
                     {
-                        if (drawable.world.players.Keys.Contains(id))
+                        if (drawable.client.world.players.Keys.Contains(id))
                         {
-                            drawable.world.players.Remove(id);
+                            drawable.client.world.players.Remove(id);
                         }
                     }
 
@@ -274,7 +287,7 @@ namespace ClientGUI
 
                     if (thisPlayerDead && !wantsToPlayAgain)
                     {
-                        client.Disconnect();
+                        channel.Disconnect();
                         // what happens now?
                     }
                 }
