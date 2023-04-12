@@ -11,7 +11,7 @@ namespace ClientGUI
     internal class Client
     {
         public Player thisPlayer;
-        int currViewPortalWidth = 800;
+        public int currViewPortalWidth = 800;
         public long thisPlayersID;
 
         public World world = new World();

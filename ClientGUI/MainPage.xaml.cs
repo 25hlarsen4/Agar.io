@@ -13,7 +13,7 @@ namespace ClientGUI
         Networking channel;
 
         Point mousePosition;
-        DateTime startTime;
+        //DateTime startTime;
 
         //Player thisPlayer;
         //int currViewPortalWidth = 800;
@@ -54,7 +54,7 @@ namespace ClientGUI
                 System.Timers.Timer timer = new System.Timers.Timer(33);
                 timer.Elapsed += TickEvent;
                 timer.Start();
-                startTime = DateTime.Now;
+                //startTime = DateTime.Now;
             } catch
             {
                 await DisplayAlert("Alert", "Unable to connect :(", "OK");
@@ -67,33 +67,70 @@ namespace ClientGUI
         }
 
         private void PointerChanged(object sender, PointerEventArgs e)
-        { 
-            if ((DateTime.Now - startTime).TotalMilliseconds > 300 ) 
-            {
-                // Position inside window
-                Point windowPosition = (Point)e.GetPosition(null);
-                float xPos = (float)windowPosition.X;
-                float yPos = (float)windowPosition.Y;
-                ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
+        {
+            //if ((DateTime.Now - startTime).TotalMilliseconds > 300 ) 
+            //{
+            //    // Position inside window
+            //    Point windowPosition = (Point)e.GetPosition(null);
+            //    float xPos = (float)windowPosition.X;
+            //    float yPos = (float)windowPosition.Y;
+            //    ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
 
-                //// Position relative to the container view
-                //Point? relativeToContainerPosition = e.GetPosition((View)sender);
+            //    //// Position relative to the container view
+            //    //Point? relativeToContainerPosition = e.GetPosition((View)sender);
 
-                // send move command with this point?
-                String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
-                channel.Send(moveMessage);
+            //    // send move command with this point?
+            //    String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
+            //    channel.Send(moveMessage);
 
-                startTime = DateTime.Now;
+            //    startTime = DateTime.Now;
 
-                mousePosition = windowPosition;
-            }  
+            //    mousePosition = windowPosition;
+            //}  
+
+            // Position inside window
+            Point windowPosition = (Point)e.GetPosition(null);
+            //float xPos = (float)windowPosition.X;
+            //float yPos = (float)windowPosition.Y;
+            //ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
+
+            //// Position relative to the container view
+            //Point? relativeToContainerPosition = e.GetPosition((View)sender);
+
+            // send move command with this point?
+            //String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
+            //channel.Send(moveMessage);
+
+            //startTime = DateTime.Now;
+
+            mousePosition = windowPosition;
         }
 
         private void ConvertFromScreenToWorld(in float screen_x, in float screen_y,
                                             out int world_x, out int world_y)
         {
-            world_x = (int)(screen_x / 800 * drawable.client.world.width);
-            world_y = (int)(screen_y / 800 * drawable.client.world.height);
+            int leftBoundary = (int)(drawable.client.thisPlayer.X - (drawable.client.currViewPortalWidth / 2));
+
+            int rightBoundary = (int)(drawable.client.thisPlayer.X + (drawable.client.currViewPortalWidth / 2));
+
+            int bottomBoundary = (int)(drawable.client.thisPlayer.Y + (drawable.client.currViewPortalWidth / 2));
+
+            int topBoundary = (int)(drawable.client.thisPlayer.Y - (drawable.client.currViewPortalWidth / 2));
+
+            // if the object is out of bounds???
+
+            world_x = (int)((screen_x / 800 * drawable.client.currViewPortalWidth) + leftBoundary);
+            world_y = (int)((screen_y / 800 * drawable.client.currViewPortalWidth) + topBoundary);
+
+
+            // screenx = ((worldx-leftbound) / viewPort) * 800
+
+            // worldx = (screenx / 800 * viewPort) + leftbound
+
+
+
+            //world_x = (int)(screen_x / 800 * drawable.client.world.width);
+            //world_y = (int)(screen_y / 800 * drawable.client.world.height);
         }
 
         private void OnTap(object sender, EventArgs e)
@@ -131,8 +168,18 @@ namespace ClientGUI
             // Don't forget to check for nulls here!!
             //Dispatcher.Dispatch(() => { FoodLabel.Text = "Food: " + drawable.client.world.foods.Count; });
             //Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + drawable.client.thisPlayer.X + ", " + drawable.client.thisPlayer.Y; });
-            Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + mousePosition; });
+            //Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + mousePosition; });
             //Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + drawable.client.thisPlayer.Mass; });
+
+            if (drawable.client.thisPlayer.X != mousePosition.X || drawable.client.thisPlayer.Y != mousePosition.Y)
+            {
+                float xPos = (float)mousePosition.X;
+                float yPos = (float)mousePosition.Y;
+                ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
+
+                String moveMessage = String.Format(Protocols.CMD_Move, worldX, worldY);
+                channel.Send(moveMessage);
+            }
         }
 
         private void OnConnect(Networking networking)
