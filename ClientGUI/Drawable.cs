@@ -25,9 +25,10 @@ namespace ClientGUI
                 {
                     //Debug.WriteLine("screen X: " + screen_x + ", Y: " + screen_y + ", radius: " + screen_radius);
                     //Debug.WriteLine("drawing player " + player.ID);
-                    canvas.StrokeColor = Colors.Black;
+                    Microsoft.Maui.Graphics.Color color = Microsoft.Maui.Graphics.Color.FromInt(player.ARGBColor);
+                    canvas.StrokeColor = color;
                     canvas.StrokeSize = 2;
-                    canvas.FillColor = Colors.Blue;
+                    canvas.FillColor = color;
                     canvas.FillCircle(screen_x, screen_y, screen_radius);
                 }
             }
@@ -38,9 +39,10 @@ namespace ClientGUI
                     out int screen_x, out int screen_y, out int screen_radius))
                 {
                     //Debug.WriteLine("drawing food");
-                    canvas.StrokeColor = Colors.Black;
+                    Microsoft.Maui.Graphics.Color color = Microsoft.Maui.Graphics.Color.FromInt(food.ARGBColor);
+                    canvas.StrokeColor = color;
                     canvas.StrokeSize = 2;
-                    canvas.FillColor = Colors.Red;
+                    canvas.FillColor = color;
                     canvas.FillCircle(screen_x, screen_y, screen_radius);
                 }
             }

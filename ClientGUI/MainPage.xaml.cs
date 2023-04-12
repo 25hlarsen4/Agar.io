@@ -23,12 +23,14 @@ namespace ClientGUI
         {
             InitializeComponent();
 
+            InitializationLogic();
+
             // the Drawable stores the Client which stores the world
-            drawable = new Drawable();
+            //drawable = new Drawable();
 
-            PlaySurface.Drawable = drawable;
+            //PlaySurface.Drawable = drawable;
 
-            channel = new Networking(NullLogger.Instance, OnConnect, OnDisconnect, OnMessageReceived, '\n');
+            //channel = new Networking(NullLogger.Instance, OnConnect, OnDisconnect, OnMessageReceived, '\n');
 
 
 
@@ -41,6 +43,15 @@ namespace ClientGUI
             //timer.Start();
         }
 
+        private void InitializationLogic()
+        {
+            drawable = new Drawable();
+
+            PlaySurface.Drawable = drawable;
+
+            channel = new Networking(NullLogger.Instance, OnConnect, OnDisconnect, OnMessageReceived, '\n');
+        }
+
         private async void OnNameEntryCompleted(object sender, EventArgs e)
         {
             WelcomeScreen.IsVisible = false;
@@ -50,7 +61,9 @@ namespace ClientGUI
             try
             {
                 channel.Connect(ServerEntry.Text, 11000);
+                Debug.WriteLine("connected");
                 channel.ClientAwaitMessagesAsync();
+                Debug.WriteLine("awaiting messages");
 
                 System.Timers.Timer timer = new System.Timers.Timer(33);
                 timer.Elapsed += TickEvent;
@@ -172,7 +185,7 @@ namespace ClientGUI
             //Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + mousePosition; });
             //Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + drawable.client.thisPlayer.Mass; });
 
-            if (drawable.client.thisPlayer.X != mousePosition.X || drawable.client.thisPlayer.Y != mousePosition.Y)
+            if (drawable.client.thisPlayer != null && (drawable.client.thisPlayer.X != mousePosition.X || drawable.client.thisPlayer.Y != mousePosition.Y))
             {
                 float xPos = (float)mousePosition.X;
                 float yPos = (float)mousePosition.Y;
@@ -324,9 +337,20 @@ namespace ClientGUI
 
                     if (wantsToPlayAgain)
                     {
-                        GameScreen.IsVisible = false;
-                        WelcomeScreen.IsVisible = true;
-                    }
+                        //GameScreen.IsVisible = false;
+                        //WelcomeScreen.IsVisible = true;
+                        channel.Disconnect();
+                        Debug.WriteLine("Disconnected");
+                        InitializationLogic();
+                        try
+                        {
+                            channel.Connect(ServerEntry.Text, 11000);
+                            channel.ClientAwaitMessagesAsync();
+                        } catch
+                        {
+                            await DisplayAlert("Alert", "Unable to connect :(", "OK");
+                        }
+;                    }
 
                     if (thisPlayerDead && !wantsToPlayAgain)
                     {
