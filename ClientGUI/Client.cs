@@ -16,9 +16,6 @@ namespace ClientGUI
 
         public World world = new World();
 
-        //    worldx             screenx
-        //   ---------     =    ---------
-        //  world width        screen width
         internal bool ConvertFromWorldToScreen(in float world_x, in float world_y, in float world_radius,
                                                     out int screen_x, out int screen_y, out int screen_radius)
         {

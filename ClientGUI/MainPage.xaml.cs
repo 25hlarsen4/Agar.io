@@ -13,6 +13,7 @@ namespace ClientGUI
         Networking channel;
 
         Point mousePosition;
+        Stopwatch stopWatch;
 
         public MainPage()
         {
@@ -28,6 +29,8 @@ namespace ClientGUI
             PlaySurface.Drawable = drawable;
 
             channel = new Networking(NullLogger.Instance, OnConnect, OnDisconnect, OnMessageReceived, '\n');
+
+            stopWatch = new Stopwatch();
         }
 
         private async void OnNameEntryCompleted(object sender, EventArgs e)
@@ -159,6 +162,8 @@ namespace ClientGUI
             // {Command Player Object}5, lets the client know the game has started
             else if (message.Contains(Protocols.CMD_Player_Object))
             {
+                stopWatch.Start();
+
                 string id = message.Substring(23);
                 int.TryParse(id, out int result);
                 long longID = (long)result;
@@ -240,8 +245,10 @@ namespace ClientGUI
 
                     if (id == drawable.client.thisPlayer.ID)
                     {
+                        stopWatch.Stop();
+                        TimeSpan ts = stopWatch.Elapsed;
                         thisPlayerDead = true;
-                        wantsToPlayAgain = await DisplayAlert("You died!", "Do you want to play again?", "Yes", "No");
+                        wantsToPlayAgain = await DisplayAlert("You died!", "Your final mass was " + drawable.client.thisPlayer.Mass + ",\nand you managed to stay alive for " + ts.Minutes + " minutes!\nDo you want to play again?", "Yes", "No");
                     }
 
                     if (wantsToPlayAgain)
