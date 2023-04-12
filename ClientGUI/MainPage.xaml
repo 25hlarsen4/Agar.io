@@ -26,8 +26,6 @@
                     WidthRequest="800">
                         <GraphicsView.GestureRecognizers>
                             <PointerGestureRecognizer PointerMoved="PointerChanged"/>
-                            <TapGestureRecognizer Tapped="OnTap"/>
-                            <PanGestureRecognizer PanUpdated="PanUpdated"/>
                         </GraphicsView.GestureRecognizers>
                     </GraphicsView>
 
