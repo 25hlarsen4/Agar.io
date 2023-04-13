@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging.Abstractions;
 using System.Text.Json;
 using System.Diagnostics;
 using System.Timers;
+using Microsoft.Extensions.Logging;
 
 namespace ClientGUI
 {
@@ -23,6 +24,11 @@ namespace ClientGUI
     /// </summary>
     public partial class MainPage : ContentPage
     {
+        ///// <summary>
+        ///// A logger to log debugging information
+        ///// </summary>
+        //ILogger _logger;
+
         /// <summary>
         /// The Drawable object that allows for the game world to be continuously redrawn.
         /// This object stores a Client object, which keeps track of "this player" playing the game
@@ -49,27 +55,40 @@ namespace ClientGUI
         /// <summary>
         /// This starts the application.
         /// </summary>
-        public MainPage()
+
+        public MainPage(ILogger<MainPage> logger)
         {
             InitializeComponent();
 
-            InitializationLogic();
-        }
+            //InitializationLogic();
 
-        /// <summary>
-        /// This method initializes the game by initializing the Drawable, which initializes 
-        /// the Client, which initializes the World.
-        /// </summary>
-        private void InitializationLogic()
-        {
             drawable = new Drawable();
 
             PlaySurface.Drawable = drawable;
 
-            channel = new Networking(NullLogger.Instance, OnConnect, OnDisconnect, OnMessageReceived, '\n');
+            drawable.client.world._logger = logger;
+
+            channel = new Networking(logger, OnConnect, OnDisconnect, OnMessageReceived, '\n');
 
             stopWatch = new Stopwatch();
         }
+
+        ///// <summary>
+        ///// This method initializes the game by initializing the Drawable, which initializes 
+        ///// the Client, which initializes the World.
+        ///// </summary>
+        //private void InitializationLogic()
+        //{
+        //    drawable = new Drawable();
+
+        //    PlaySurface.Drawable = drawable;
+
+        //    _logger = drawable.client.world._logger;
+
+        //    channel = new Networking(_logger, OnConnect, OnDisconnect, OnMessageReceived, '\n');
+
+        //    stopWatch = new Stopwatch();
+        //}
 
         /// <summary>
         /// This method ensures that when a client enters their name, the game screen is made
@@ -209,7 +228,7 @@ namespace ClientGUI
         /// <param name="networking"> the networking object that disconnected </param>
         private void OnDisconnect(Networking networking)
         {
-            Debug.WriteLine("player successfully disconnected.");
+            drawable.client.world._logger.LogDebug("player successfully disconnected.");
         }
 
         /// <summary>

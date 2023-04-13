@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection.Metadata;
@@ -22,7 +23,10 @@ namespace AgarioModels
     /// </summary>
     public class World
     {
-        //readonly ILogger logger;
+        /// <summary>
+        /// A logger to log debugging information
+        /// </summary>
+        public ILogger _logger;
 
         /// <summary>
         /// The width of the world.
@@ -43,5 +47,11 @@ namespace AgarioModels
         /// The Dictionary that keeps track of all current food and their IDs
         /// </summary>
         public Dictionary<long, Food> foods = new Dictionary<long, Food>();
+
+        //public World(ILogger<World> logger) 
+        //{ 
+        //    _logger = logger;
+        //}
+
     }
 }

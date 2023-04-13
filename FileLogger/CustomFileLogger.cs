@@ -81,8 +81,8 @@ namespace FileLogger
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             File.AppendAllText(_FileName, DateTime.Now.ToString());
-            // the thread id, debug level, and message will all be stored in the debug message
             File.AppendAllText(_FileName, formatter(state, exception));
+            File.AppendAllText(_FileName, LogLevel.Debug.ToString());
             File.AppendAllText(_FileName, Environment.NewLine);
         }
     }

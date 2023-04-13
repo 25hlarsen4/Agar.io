@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AgarioModels", "AgarioModel
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClientGUI", "ClientGUI\ClientGUI.csproj", "{2F02A5AD-EF01-47B0-BBC7-67183041A4CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileLogger", "FileLogger\FileLogger.csproj", "{37D58A47-0000-4A90-964C-7FA513A1D280}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Logger", "FileLogger\Logger.csproj", "{37D58A47-0000-4A90-964C-7FA513A1D280}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{FE294336-3CBD-4E5A-8AA2-45094523B054}"
 	ProjectSection(SolutionItems) = preProject
