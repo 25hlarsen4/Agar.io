@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace AgarioModels
 {
+    /// <summary>
+    /// Authors:     Course staff
+    /// 
+    /// File Contents:
+    /// This class lists out the specific protocol that must be followed when sending messages
+    /// across the network.
+    /// </summary>
     public class Protocols
     {
         /// <summary>
