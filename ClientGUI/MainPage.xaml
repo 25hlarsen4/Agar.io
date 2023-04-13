@@ -109,7 +109,6 @@
                     <Entry x:Name="ServerEntry"
                             Text="localhost"
                        MinimumWidthRequest="200"
-                    Completed="OnServerEntryCompleted"
                    />
 
                 </HorizontalStackLayout>
