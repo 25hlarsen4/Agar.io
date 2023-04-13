@@ -44,7 +44,7 @@ namespace FileLogger
             categoryName = catName;
             _FileName = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)
                + Path.DirectorySeparatorChar
-               + $"CS3500-{categoryName}.log";
+               + $"CS3500-Agario.log";
         }
 
         /// <summary>

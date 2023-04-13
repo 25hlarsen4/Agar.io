@@ -1,4 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
+    <!-- ///Authors:     Hannah Larsen & Todd Oldham
+    /// Date:        05-April-2023
+    /// Course:      CS3500, University of Utah, School of Computing
+    /// Copyright:   CS3500, Hannah Larsen, and Todd Oldham - This work may not be copied for use in academic coursework.
+    /// 
+    /// We, Hannah Larsen and Todd Oldham, certify that we wrote this code from scratch and did not copy it in part or whole 
+    /// from another source.
+    /// All references used in the completion of the assignment are cited in our README file.
+    /// 
+    /// File Contents:
+    /// This xaml file provides the basic outline for what our Agario application will look like.
+    /// It includes both a welcome screen and an actual game screen. -->
 <ContentPage 
              xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
@@ -73,6 +85,18 @@
             Spacing="25"
             Padding="30,0"
             VerticalOptions="Center">
+
+                <Label
+                Text="Welcome To Agario!"
+                SemanticProperties.HeadingLevel="Level1"
+                FontSize="25"
+                HorizontalOptions="Center" />
+
+                <Label
+                Text="Enter your desired name and server below:"
+                SemanticProperties.HeadingLevel="Level1"
+                FontSize="15"
+                HorizontalOptions="Center" />
 
                 <HorizontalStackLayout
             Spacing="25"

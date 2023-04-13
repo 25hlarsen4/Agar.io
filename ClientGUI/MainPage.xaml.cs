@@ -24,11 +24,6 @@ namespace ClientGUI
     /// </summary>
     public partial class MainPage : ContentPage
     {
-        ///// <summary>
-        ///// A logger to log debugging information
-        ///// </summary>
-        //ILogger _logger;
-
         /// <summary>
         /// The Drawable object that allows for the game world to be continuously redrawn.
         /// This object stores a Client object, which keeps track of "this player" playing the game
@@ -89,7 +84,7 @@ namespace ClientGUI
             try
             {
                 channel.Connect(ServerEntry.Text, 11000);
-                drawable.client.world._logger.LogDebug("successfully connected.");
+                drawable.client.world._logger.LogDebug(" successfully connected ");
                 channel.ClientAwaitMessagesAsync();
 
                 System.Timers.Timer timer = new System.Timers.Timer(33);
@@ -146,7 +141,7 @@ namespace ClientGUI
                 float yPos = (float)mousePosition.Y;
                 ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
 
-                drawable.client.world._logger.LogDebug("this player splitting");
+                drawable.client.world._logger.LogDebug(" this player splitting ");
                 String splitMessage = String.Format(Protocols.CMD_Split, worldX, worldY);
                 channel.Send(splitMessage);
             }
@@ -209,7 +204,7 @@ namespace ClientGUI
         /// <param name="networking"> the networking object that disconnected </param>
         private void OnDisconnect(Networking networking)
         {
-            drawable.client.world._logger.LogDebug("player successfully disconnected.");
+            drawable.client.world._logger.LogDebug(" player successfully disconnected ");
         }
 
         /// <summary>
@@ -246,6 +241,7 @@ namespace ClientGUI
                         if (!drawable.client.world.foods.ContainsValue(food))
                         {
                             drawable.client.world.foods.Add(food.ID, food);
+                            drawable.client.world._logger.LogTrace(" added food ");
                         }
                     }  
                 }
@@ -269,7 +265,7 @@ namespace ClientGUI
 
                 drawable.client.world.players.TryGetValue(longID, out Player player);
                 drawable.client.thisPlayer = player;
-                drawable.client.world._logger.LogDebug("this player has been set.");
+                drawable.client.world._logger.LogDebug(" this player has been set ");
             }
 
 
@@ -286,6 +282,7 @@ namespace ClientGUI
                         if (!drawable.client.world.players.ContainsKey(player.ID))
                         {
                             drawable.client.world.players.Add(player.ID, player);
+                            drawable.client.world._logger.LogTrace(" added new player ");
                         }
 
                         else
@@ -298,6 +295,7 @@ namespace ClientGUI
 
                             drawable.client.world.players.Remove(player.ID);
                             drawable.client.world.players.Add(player.ID, player);
+                            drawable.client.world._logger.LogTrace(" updated player ");
                         }
                     }
                 }
@@ -332,13 +330,14 @@ namespace ClientGUI
                         if (drawable.client.world.players.Keys.Contains(id))
                         {
                             drawable.client.world.players.Remove(id);
+                            drawable.client.world._logger.LogTrace(" player died ");
                         }
                     }
 
                     // if "this player" has died, present their stats and ask if they want to play again
                     if (id == drawable.client.thisPlayer.ID)
                     {
-                        drawable.client.world._logger.LogDebug("this player has died.");
+                        drawable.client.world._logger.LogDebug(" this player has died ");
                         stopWatch.Stop();
                         TimeSpan ts = stopWatch.Elapsed;
                         thisPlayerDead = true;
@@ -347,7 +346,7 @@ namespace ClientGUI
 
                     if (wantsToPlayAgain)
                     {
-                        drawable.client.world._logger.LogDebug("this player is restarting");
+                        drawable.client.world._logger.LogDebug(" this player is restarting ");
                         String command = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
                         channel.Send(command);
                     }
@@ -355,7 +354,7 @@ namespace ClientGUI
                     if (thisPlayerDead && !wantsToPlayAgain)
                     {
                         channel.Disconnect();
-                        drawable.client.world._logger.LogDebug("disconnecting this player because they don't want to play again");
+                        drawable.client.world._logger.LogDebug(" disconnecting this player because they don't want to play again ");
                         await DisplayAlert("Thanks for playing!", "Hit the X to leave the game.", "OK");
                     }
                 }
@@ -387,6 +386,7 @@ namespace ClientGUI
                         if (drawable.client.world.foods.Keys.Contains(id))
                         {
                             drawable.client.world.foods.Remove(id);
+                            drawable.client.world._logger.LogTrace(" food eaten ");
                         }
                     }
                 }
