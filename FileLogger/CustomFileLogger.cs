@@ -32,7 +32,14 @@ namespace FileLogger
     /// </summary>
     public class FileLogger : ILogger
     {
+        /// <summary>
+        /// The catergory name.
+        /// </summary>
         private readonly string categoryName;
+
+        /// <summary>
+        /// The file name to write to.
+        /// </summary>
         private string _FileName;
 
         /// <summary>

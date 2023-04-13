@@ -47,11 +47,5 @@ namespace AgarioModels
         /// The Dictionary that keeps track of all current food and their IDs
         /// </summary>
         public Dictionary<long, Food> foods = new Dictionary<long, Food>();
-
-        //public World(ILogger<World> logger) 
-        //{ 
-        //    _logger = logger;
-        //}
-
     }
 }

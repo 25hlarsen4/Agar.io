@@ -33,8 +33,6 @@ namespace ClientGUI
         /// </summary>
         public int currViewPortalWidth = 800;
 
-        public long thisPlayersID;
-
         /// <summary>
         /// The game world.
         /// </summary>

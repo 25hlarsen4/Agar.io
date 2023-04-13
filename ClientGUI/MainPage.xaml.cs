@@ -261,8 +261,6 @@ namespace ClientGUI
                 // move requests from this client
                 channel.ID = id;
 
-                drawable.client.thisPlayersID = longID;
-
                 drawable.client.world.players.TryGetValue(longID, out Player player);
                 drawable.client.thisPlayer = player;
                 drawable.client.world._logger.LogDebug(" this player has been set ");

@@ -4,7 +4,7 @@ StartDate:			05-April-2023
 Course:				CS3500, University of Utah, School of Computing
 GitHubIDs:			25hlarsen4, Destroyr-of-u
 Repo:				https://github.com/uofu-cs3500-spring23/assignment8agario-larsen__oldham.git
-CommitDate:			
+CommitDate:			12-April-2023 8:30 pm
 Solution:			Agario
 Copyright:			CS3500, Hannah Larsen, Todd Oldham - This work may not be copied for use in academic coursework.
 ```
@@ -23,7 +23,7 @@ The game has two views, one to start the game and one to play. The start is very
 server and the player name. All information about the game objects is provided by the server, so all we had to do was draw and update them,
 which we did using a timer and timing capabilities of our computers. We used typical MAUI components such as editors, entries, and labels. One
 important note is that to get the space bar to work for the split we used an entry. However the entry needs to be clicked on before the split
-function can work, this is due to the fact that we have had problems with auto focusing an entry in MAUI. We followed the MVC layed out by the
+function can work, this is due to the fact that we have had problems with auto focusing an entry in MAUI. We followed the MVC laid out by the
 assignment.
 
 # Partnership:
@@ -42,12 +42,13 @@ the instructions.
 
 To test our project we compared it to the provided client for this assignment. If our game was able to do the same things as the provided client
 then we felt that it was sufficient. We tested multiple times throughout the development process and we used a lot of debug statements to check
-the condition of variables and objects to make sure that they did what we thought they were supossed to do.
+the condition of variables and objects to make sure that they did what we thought they were supposed to do.
 
 # Time Expenditures:
 
 Predicted hours: 12	   Actual hours: 12
-Note: 
+Note: The time spent debugging, researching tools, and actually coding was split fairly evenly.
+Note2: The drawing of the scene was more of a bottleneck than the networking data.
 
 Both of our time estimation skills are improving throughout this semester, we have been able to more accurately predict the amount of
 time the assignments will take. This assignment wasn't too bad in terms of complexity, but the instructions were a little hard to

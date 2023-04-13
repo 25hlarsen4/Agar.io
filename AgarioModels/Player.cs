@@ -21,10 +21,21 @@ namespace AgarioModels
     /// </summary>
     public class Player : GameObject
     {
+        /// <summary>
+        /// Creates a Player object with the base properties.
+        /// </summary>
+        /// <param name="ID"> the player id </param>
+        /// <param name="ARGBColor"> the player color </param>
+        /// <param name="Mass"> the player mass </param>
+        /// <param name="X"> the player x-coord </param>
+        /// <param name="Y"> the player y-coord </param>
         public Player(int ID, int ARGBColor, float Mass, float X, float Y) : base(ID, ARGBColor, Mass, X, Y)
         {
         }
 
+        /// <summary>
+        /// Represents the name of the player
+        /// </summary>
         public string Name { get; set; }
     }
 }
