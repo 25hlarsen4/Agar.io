@@ -60,8 +60,6 @@ namespace ClientGUI
         {
             InitializeComponent();
 
-            //InitializationLogic();
-
             drawable = new Drawable();
 
             PlaySurface.Drawable = drawable;
@@ -72,23 +70,6 @@ namespace ClientGUI
 
             stopWatch = new Stopwatch();
         }
-
-        ///// <summary>
-        ///// This method initializes the game by initializing the Drawable, which initializes 
-        ///// the Client, which initializes the World.
-        ///// </summary>
-        //private void InitializationLogic()
-        //{
-        //    drawable = new Drawable();
-
-        //    PlaySurface.Drawable = drawable;
-
-        //    _logger = drawable.client.world._logger;
-
-        //    channel = new Networking(_logger, OnConnect, OnDisconnect, OnMessageReceived, '\n');
-
-        //    stopWatch = new Stopwatch();
-        //}
 
         /// <summary>
         /// This method ensures that when a client enters their name, the game screen is made
@@ -108,9 +89,8 @@ namespace ClientGUI
             try
             {
                 channel.Connect(ServerEntry.Text, 11000);
-                Debug.WriteLine("connected");
+                drawable.client.world._logger.LogDebug("successfully connected.");
                 channel.ClientAwaitMessagesAsync();
-                Debug.WriteLine("awaiting messages");
 
                 System.Timers.Timer timer = new System.Timers.Timer(33);
                 timer.Elapsed += TickEvent;
@@ -166,6 +146,7 @@ namespace ClientGUI
                 float yPos = (float)mousePosition.Y;
                 ConvertFromScreenToWorld(xPos, yPos, out int worldX, out int worldY);
 
+                drawable.client.world._logger.LogDebug("this player splitting");
                 String splitMessage = String.Format(Protocols.CMD_Split, worldX, worldY);
                 channel.Send(splitMessage);
             }
@@ -285,11 +266,10 @@ namespace ClientGUI
                 channel.ID = id;
 
                 drawable.client.thisPlayersID = longID;
-                Debug.WriteLine("this player's id: " + drawable.client.thisPlayersID);
 
                 drawable.client.world.players.TryGetValue(longID, out Player player);
                 drawable.client.thisPlayer = player;
-                Debug.WriteLine("thisPlayer has been set, id is: " + drawable.client.thisPlayer.ID);
+                drawable.client.world._logger.LogDebug("this player has been set.");
             }
 
 
@@ -306,7 +286,6 @@ namespace ClientGUI
                         if (!drawable.client.world.players.ContainsKey(player.ID))
                         {
                             drawable.client.world.players.Add(player.ID, player);
-                            Debug.WriteLine("successfully added player " + player.ID);
                         }
 
                         else
@@ -359,6 +338,7 @@ namespace ClientGUI
                     // if "this player" has died, present their stats and ask if they want to play again
                     if (id == drawable.client.thisPlayer.ID)
                     {
+                        drawable.client.world._logger.LogDebug("this player has died.");
                         stopWatch.Stop();
                         TimeSpan ts = stopWatch.Elapsed;
                         thisPlayerDead = true;
@@ -367,7 +347,7 @@ namespace ClientGUI
 
                     if (wantsToPlayAgain)
                     {
-                        Debug.WriteLine("Player " +  id + " is restarting.");
+                        drawable.client.world._logger.LogDebug("this player is restarting");
                         String command = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
                         channel.Send(command);
                     }
@@ -375,7 +355,7 @@ namespace ClientGUI
                     if (thisPlayerDead && !wantsToPlayAgain)
                     {
                         channel.Disconnect();
-                        Debug.WriteLine("Client was successfully disconnected");
+                        drawable.client.world._logger.LogDebug("disconnecting this player because they don't want to play again");
                         await DisplayAlert("Thanks for playing!", "Hit the X to leave the game.", "OK");
                     }
                 }
