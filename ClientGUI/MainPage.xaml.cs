@@ -5,6 +5,8 @@ using System.Text.Json;
 using System.Diagnostics;
 using System.Timers;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Data.SqlClient;
 
 namespace ClientGUI
 {
@@ -48,11 +50,42 @@ namespace ClientGUI
         Stopwatch stopWatch;
 
         /// <summary>
+        /// The information necessary for the program to connect to the Database
+        /// </summary>
+        public static string connectionString;
+
+        private bool hasBeenNumOne = false;
+
+        private int timeWhenReachedTopRank = 0;
+
+        private int GameID = 1;
+
+        /// <summary>
         /// This starts the application.
         /// </summary>
 
         public MainPage(ILogger<MainPage> logger)
         {
+            // build the connection string to connect to the database from
+            var builder = new ConfigurationBuilder();
+
+            //builder.AddUserSecrets<Lab_Starter_Code>();
+            IConfigurationRoot Configuration = builder.Build();
+            //var SelectedSecrets = Configuration.GetSection("Lab14Secrets");
+
+            connectionString = new SqlConnectionStringBuilder()
+            {
+                DataSource = "cs3500.eng.utah.edu,14330",
+                InitialCatalog = "S2023_u1341754",
+                UserID = "S2023_u1341754",
+                Password = "HarryJack2048!",
+                //Password = SelectedSecrets["NewPassword"],
+                Encrypt = false
+            }.ConnectionString;
+
+
+
+
             InitializeComponent();
 
             drawable = new Drawable();
@@ -297,6 +330,30 @@ namespace ClientGUI
                         }
                     }
                 }
+
+                // see if this player is top ranked player for database stats
+                if (!hasBeenNumOne)
+                {
+                    lock (drawable.client.world.players)
+                    {
+                        bool isBiggest = true;
+                        foreach (Player player in drawable.client.world.players.Values)
+                        {
+                            if (player.Mass > drawable.client.thisPlayer.Mass)
+                            {
+                                isBiggest = false;
+                                break;
+                            }
+                        }
+
+                        if (isBiggest)
+                        {
+                            hasBeenNumOne = true;
+                            timeWhenReachedTopRank = stopWatch.Elapsed.Minutes;
+                        }
+                    }
+                }
+                
             }
 
 
@@ -327,6 +384,9 @@ namespace ClientGUI
                     {
                         if (drawable.client.world.players.Keys.Contains(id))
                         {
+                            // send stats to database
+                            SendToDeadPlayersTable(drawable.client.world.players[id].Name, (int) drawable.client.world.players[id].Mass);
+
                             drawable.client.world.players.Remove(id);
                             drawable.client.world._logger.LogTrace(" player died ");
                         }
@@ -335,15 +395,22 @@ namespace ClientGUI
                     // if "this player" has died, present their stats and ask if they want to play again
                     if (id == drawable.client.thisPlayer.ID)
                     {
-                        drawable.client.world._logger.LogDebug(" this player has died ");
                         stopWatch.Stop();
                         TimeSpan ts = stopWatch.Elapsed;
+
+                        // send stats to the database
+                        SendStatsToDB(drawable.client.thisPlayer.Name, GameID, (int) drawable.client.thisPlayer.Mass, ts.Minutes, timeWhenReachedTopRank);
+
+
+
+                        drawable.client.world._logger.LogDebug(" this player has died ");
                         thisPlayerDead = true;
                         wantsToPlayAgain = await DisplayAlert("You died!", "Your final mass was " + drawable.client.thisPlayer.Mass + ",\nand you managed to stay alive for " + ts.Minutes + " minutes!\nDo you want to play again?", "Yes", "No");
                     }
 
                     if (wantsToPlayAgain)
                     {
+                        GameID++;
                         drawable.client.world._logger.LogDebug(" this player is restarting ");
                         String command = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
                         channel.Send(command);
@@ -388,6 +455,53 @@ namespace ClientGUI
                         }
                     }
                 }
+            }
+        }
+
+        private void SendStatsToDB(string name, int gameid, int mass, int timeAlive, int topTime)
+        {
+            try
+            {
+                using SqlConnection con = new SqlConnection(connectionString);
+                con.Open();
+                using SqlCommand cmd = new SqlCommand($@"INSERT INTO Players1 VALUES ({name});", con);
+                cmd.ExecuteNonQuery();
+
+
+                using SqlConnection con2 = new SqlConnection(connectionString);
+                con2.Open();
+                using SqlCommand cmd2 = new SqlCommand($@"SELECT PlayerID FROM Players1 WHERE Name='{name}'", con2);
+                using SqlDataReader reader = cmd2.ExecuteReader();
+
+                int ID = 0;
+
+                // this should only loop once
+                while (reader.Read())
+                {
+                    ID = reader.GetInt32(0);
+                }
+
+                using SqlConnection con3 = new SqlConnection(connectionString);
+                con3.Open();
+                using SqlCommand cmd3 = new SqlCommand($@"INSERT INTO Games4 VALUES ({gameid}, {ID}, {mass}, {timeAlive}, {topTime});", con3);
+                cmd3.ExecuteNonQuery();
+            } catch 
+            { 
+            
+            }   
+        }
+
+        private void SendToDeadPlayersTable(string name, int mass)
+        {
+            try
+            {
+                using SqlConnection con = new SqlConnection(connectionString);
+                con.Open();
+                using SqlCommand cmd = new SqlCommand($@"INSERT INTO DeadPlayers VALUES ({name}, {mass});", con);
+                cmd.ExecuteNonQuery();
+            } catch
+            {
+
             }
         }
     }
