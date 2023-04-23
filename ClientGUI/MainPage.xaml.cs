@@ -50,14 +50,29 @@ namespace ClientGUI
         Stopwatch stopWatch;
 
         /// <summary>
+        /// A stopwatch used to track the time at which this player becomes number 1.
+        /// </summary>
+        Stopwatch stopWatch2;
+
+        /// <summary>
         /// The information necessary for the program to connect to the Database
         /// </summary>
         public static string connectionString;
 
+        /// <summary>
+        /// This keeps track of whether this player has reached number 1 yet
+        /// </summary>
         private bool hasBeenNumOne = false;
 
+        /// <summary>
+        /// This will hold the number of minutes into the game this player reached number 1, 
+        /// and if they never do, it will hold a zero.
+        /// </summary>
         private int timeWhenReachedTopRank = 0;
 
+        /// <summary>
+        /// This holds the GameID.
+        /// </summary>
         private int GameID = 1;
 
         /// <summary>
@@ -97,6 +112,7 @@ namespace ClientGUI
             channel = new Networking(logger, OnConnect, OnDisconnect, OnMessageReceived, '\n');
 
             stopWatch = new Stopwatch();
+            stopWatch2 = new Stopwatch();
         }
 
         /// <summary>
@@ -285,6 +301,7 @@ namespace ClientGUI
             else if (message.Contains(Protocols.CMD_Player_Object))
             {
                 stopWatch.Start();
+                stopWatch2.Start();
 
                 string id = message.Substring(23);
                 int.TryParse(id, out int result);
@@ -349,7 +366,7 @@ namespace ClientGUI
                         if (isBiggest)
                         {
                             hasBeenNumOne = true;
-                            timeWhenReachedTopRank = stopWatch.Elapsed.Minutes;
+                            timeWhenReachedTopRank = stopWatch2.Elapsed.Minutes;
                         }
                     }
                 }
@@ -397,6 +414,7 @@ namespace ClientGUI
                     {
                         stopWatch.Stop();
                         TimeSpan ts = stopWatch.Elapsed;
+                        stopWatch2.Stop();
 
                         // send stats to the database
                         SendStatsToDB(drawable.client.thisPlayer.Name, GameID, (int) drawable.client.thisPlayer.Mass, ts.Minutes, timeWhenReachedTopRank);
@@ -458,6 +476,15 @@ namespace ClientGUI
             }
         }
 
+        /// <summary>
+        /// This inserts stats into the Players1 and Games4 tables in our database.
+        /// </summary>
+        /// <param name="name"> the name of the player to put in the players table </param>
+        /// <param name="gameid"> the gameid to put into the games table </param>
+        /// <param name="mass"> the mass to put into the games table </param>
+        /// <param name="timeAlive"> the game length to put into the games table </param>
+        /// <param name="topTime"> the time at which the player reached number 1 to put 
+        /// into the games table </param>
         private void SendStatsToDB(string name, int gameid, int mass, int timeAlive, int topTime)
         {
             try
@@ -491,6 +518,11 @@ namespace ClientGUI
             }   
         }
 
+        /// <summary>
+        /// This inserts stats into the DeadPlayers table in our database.
+        /// </summary>
+        /// <param name="name"> the Name of the dead player to put in the table </param>
+        /// <param name="mass"> the final mass of the dead player to put in the table </param>
         private void SendToDeadPlayersTable(string name, int mass)
         {
             try
