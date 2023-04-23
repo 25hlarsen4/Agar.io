@@ -491,7 +491,7 @@ namespace ClientGUI
             {
                 using SqlConnection con = new SqlConnection(connectionString);
                 con.Open();
-                using SqlCommand cmd = new SqlCommand($@"INSERT INTO Players1 VALUES ({name});", con);
+                using SqlCommand cmd = new SqlCommand($@"INSERT INTO Players1 VALUES ('{name}');", con);
                 cmd.ExecuteNonQuery();
 
 
@@ -529,7 +529,7 @@ namespace ClientGUI
             {
                 using SqlConnection con = new SqlConnection(connectionString);
                 con.Open();
-                using SqlCommand cmd = new SqlCommand($@"INSERT INTO DeadPlayers VALUES ({name}, {mass});", con);
+                using SqlCommand cmd = new SqlCommand($@"INSERT INTO DeadPlayers VALUES ('{name}', {mass});", con);
                 cmd.ExecuteNonQuery();
             } catch
             {
