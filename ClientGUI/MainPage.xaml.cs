@@ -7,6 +7,7 @@ using System.Timers;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Data.SqlClient;
+using System;
 
 namespace ClientGUI
 {
@@ -86,20 +87,18 @@ namespace ClientGUI
 
         public MainPage(ILogger<MainPage> logger)
         {
-            // build the connection string to connect to the database from
             var builder = new ConfigurationBuilder();
 
-            //builder.AddUserSecrets<Lab_Starter_Code>();
+            builder.AddUserSecrets<MainPage>();
             IConfigurationRoot Configuration = builder.Build();
-            //var SelectedSecrets = Configuration.GetSection("Lab14Secrets");
+            var SelectedSecrets = Configuration.GetSection("WebServerSecrets");
 
             connectionString = new SqlConnectionStringBuilder()
             {
-                DataSource = "cs3500.eng.utah.edu,14330",
-                InitialCatalog = "S2023_u1341754",
-                UserID = "S2023_u1341754",
-                Password = "HarryJack2048!",
-                //Password = SelectedSecrets["NewPassword"],
+                DataSource = SelectedSecrets["ServerName"],
+                InitialCatalog = SelectedSecrets["DatabaseName"],
+                UserID = SelectedSecrets["User"],
+                Password = SelectedSecrets["DatabasePassword"],
                 Encrypt = false
             }.ConnectionString;
 
@@ -360,19 +359,22 @@ namespace ClientGUI
                     masses.Add(player.Mass);
                 }
                 masses.Sort();
-                for (int i = 0; i < masses.Count; i++)
+                if (drawable.client.thisPlayer != null)
                 {
-                    if (masses[i] == drawable.client.thisPlayer.Mass)
+                    for (int i = 0; i < masses.Count; i++)
                     {
-                        if (i < bestRank)
+                        if (masses[i] == drawable.client.thisPlayer.Mass)
                         {
-                            bestRank = i;
+                            if (i < bestRank)
+                            {
+                                bestRank = i;
+                            }
                         }
                     }
                 }
 
                 // see if this player is top ranked player for database stats
-                if (!hasBeenNumOne)
+                if (!hasBeenNumOne && drawable.client.thisPlayer != null)
                 {
                     lock (drawable.client.world.players)
                     {
