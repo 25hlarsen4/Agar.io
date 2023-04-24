@@ -76,6 +76,11 @@ namespace ClientGUI
         private int GameID = 1;
 
         /// <summary>
+        /// This will hold the best rank this player achieves
+        /// </summary>
+        private int bestRank = int.MaxValue;
+
+        /// <summary>
         /// This starts the application.
         /// </summary>
 
@@ -348,6 +353,24 @@ namespace ClientGUI
                     }
                 }
 
+                // calculate the rank of this play if it's a new best
+                List<float> masses = new List<float>();
+                foreach (Player player in players)
+                {
+                    masses.Add(player.Mass);
+                }
+                masses.Sort();
+                for (int i = 0; i < masses.Count; i++)
+                {
+                    if (masses[i] == drawable.client.thisPlayer.Mass)
+                    {
+                        if (i < bestRank)
+                        {
+                            bestRank = i;
+                        }
+                    }
+                }
+
                 // see if this player is top ranked player for database stats
                 if (!hasBeenNumOne)
                 {
@@ -417,7 +440,7 @@ namespace ClientGUI
                         stopWatch2.Stop();
 
                         // send stats to the database
-                        SendStatsToDB(drawable.client.thisPlayer.Name, GameID, (int) drawable.client.thisPlayer.Mass, ts.Minutes, timeWhenReachedTopRank);
+                        SendStatsToDB(drawable.client.thisPlayer.Name, GameID, (int) drawable.client.thisPlayer.Mass, ts.Minutes, timeWhenReachedTopRank, bestRank);
 
 
 
@@ -429,6 +452,7 @@ namespace ClientGUI
                     if (wantsToPlayAgain)
                     {
                         GameID++;
+                        bestRank = int.MaxValue;
                         drawable.client.world._logger.LogDebug(" this player is restarting ");
                         String command = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
                         channel.Send(command);
@@ -477,7 +501,7 @@ namespace ClientGUI
         }
 
         /// <summary>
-        /// This inserts stats into the Players1 and Games4 tables in our database.
+        /// This inserts stats into the Players1 and Games5 tables in our database.
         /// </summary>
         /// <param name="name"> the name of the player to put in the players table </param>
         /// <param name="gameid"> the gameid to put into the games table </param>
@@ -485,7 +509,8 @@ namespace ClientGUI
         /// <param name="timeAlive"> the game length to put into the games table </param>
         /// <param name="topTime"> the time at which the player reached number 1 to put 
         /// into the games table </param>
-        private void SendStatsToDB(string name, int gameid, int mass, int timeAlive, int topTime)
+        /// <param name="bestRank"> the best rank this player achieved in this game </param>
+        private void SendStatsToDB(string name, int gameid, int mass, int timeAlive, int topTime, int bestRank)
         {
             try
             {
@@ -510,7 +535,7 @@ namespace ClientGUI
 
                 using SqlConnection con3 = new SqlConnection(connectionString);
                 con3.Open();
-                using SqlCommand cmd3 = new SqlCommand($@"INSERT INTO Games4 VALUES ({gameid}, {ID}, {mass}, {timeAlive}, {topTime});", con3);
+                using SqlCommand cmd3 = new SqlCommand($@"INSERT INTO Games5 VALUES ({gameid}, {ID}, {mass}, {timeAlive}, {topTime}, {bestRank});", con3);
                 cmd3.ExecuteNonQuery();
             } catch 
             { 
