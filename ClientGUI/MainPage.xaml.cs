@@ -352,22 +352,23 @@ namespace ClientGUI
                     }
                 }
 
-                // calculate the rank of this play if it's a new best
-                List<float> masses = new List<float>();
-                foreach (Player player in players)
-                {
-                    masses.Add(player.Mass);
-                }
-                masses.Sort();
+                // calculate the rank of this player if it's a new best
                 if (drawable.client.thisPlayer != null)
                 {
+                    List<float> masses = new List<float>();
+                    foreach (Player player in players)
+                    {
+                        masses.Add(player.Mass);
+                    }
+                    masses.Sort();
                     for (int i = 0; i < masses.Count; i++)
                     {
                         if (masses[i] == drawable.client.thisPlayer.Mass)
                         {
-                            if (i < bestRank)
+                            int rank = masses.Count - i;
+                            if (rank < bestRank)
                             {
-                                bestRank = i;
+                                bestRank = rank;
                             }
                         }
                     }
@@ -391,7 +392,7 @@ namespace ClientGUI
                         if (isBiggest)
                         {
                             hasBeenNumOne = true;
-                            timeWhenReachedTopRank = stopWatch2.Elapsed.Minutes;
+                            timeWhenReachedTopRank = (int) stopWatch2.Elapsed.TotalMinutes;
                         }
                     }
                 }
@@ -437,18 +438,18 @@ namespace ClientGUI
                     // if "this player" has died, present their stats and ask if they want to play again
                     if (id == drawable.client.thisPlayer.ID)
                     {
-                        stopWatch.Stop();
                         TimeSpan ts = stopWatch.Elapsed;
+                        stopWatch.Stop();
                         stopWatch2.Stop();
 
                         // send stats to the database
-                        SendStatsToDB(drawable.client.thisPlayer.Name, GameID, (int) drawable.client.thisPlayer.Mass, ts.Minutes, timeWhenReachedTopRank, bestRank);
+                        SendStatsToDB(drawable.client.thisPlayer.Name, GameID, (int) drawable.client.thisPlayer.Mass, (int) ts.TotalMinutes, timeWhenReachedTopRank, bestRank);
 
 
 
                         drawable.client.world._logger.LogDebug(" this player has died ");
                         thisPlayerDead = true;
-                        wantsToPlayAgain = await DisplayAlert("You died!", "Your final mass was " + drawable.client.thisPlayer.Mass + ",\nand you managed to stay alive for " + ts.Minutes + " minutes!\nDo you want to play again?", "Yes", "No");
+                        wantsToPlayAgain = await DisplayAlert("You died!", "Your final mass was " + drawable.client.thisPlayer.Mass + ",\nand you managed to stay alive for " + ts.TotalMinutes + " minutes!\nDo you want to play again?", "Yes", "No");
                     }
 
                     if (wantsToPlayAgain)
