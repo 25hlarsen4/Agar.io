@@ -58,7 +58,7 @@ namespace ClientGUI
         /// <summary>
         /// The information necessary for the program to connect to the Database
         /// </summary>
-        public static string connectionString;
+        private static string connectionString;
 
         /// <summary>
         /// This keeps track of whether this player has reached number 1 yet
