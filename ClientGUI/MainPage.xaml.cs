@@ -5,9 +5,6 @@ using System.Text.Json;
 using System.Diagnostics;
 using System.Timers;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Data.SqlClient;
-using System;
 
 namespace ClientGUI
 {
@@ -51,60 +48,11 @@ namespace ClientGUI
         Stopwatch stopWatch;
 
         /// <summary>
-        /// A stopwatch used to track the time at which this player becomes number 1.
-        /// </summary>
-        Stopwatch stopWatch2;
-
-        /// <summary>
-        /// The information necessary for the program to connect to the Database
-        /// </summary>
-        private static string connectionString;
-
-        /// <summary>
-        /// This keeps track of whether this player has reached number 1 yet
-        /// </summary>
-        private bool hasBeenNumOne = false;
-
-        /// <summary>
-        /// This will hold the number of minutes into the game this player reached number 1, 
-        /// and if they never do, it will hold a zero.
-        /// </summary>
-        private int timeWhenReachedTopRank = 0;
-
-        /// <summary>
-        /// This holds the GameID.
-        /// </summary>
-        private int GameID = 1;
-
-        /// <summary>
-        /// This will hold the best rank this player achieves
-        /// </summary>
-        private int bestRank = int.MaxValue;
-
-        /// <summary>
         /// This starts the application.
         /// </summary>
 
         public MainPage(ILogger<MainPage> logger)
         {
-            var builder = new ConfigurationBuilder();
-
-            builder.AddUserSecrets<MainPage>();
-            IConfigurationRoot Configuration = builder.Build();
-            var SelectedSecrets = Configuration.GetSection("WebServerSecrets");
-
-            connectionString = new SqlConnectionStringBuilder()
-            {
-                DataSource = SelectedSecrets["ServerName"],
-                InitialCatalog = SelectedSecrets["DatabaseName"],
-                UserID = SelectedSecrets["User"],
-                Password = SelectedSecrets["DatabasePassword"],
-                Encrypt = false
-            }.ConnectionString;
-
-
-
-
             InitializeComponent();
 
             drawable = new Drawable();
@@ -116,7 +64,6 @@ namespace ClientGUI
             channel = new Networking(logger, OnConnect, OnDisconnect, OnMessageReceived, '\n');
 
             stopWatch = new Stopwatch();
-            stopWatch2 = new Stopwatch();
         }
 
         /// <summary>
@@ -143,7 +90,8 @@ namespace ClientGUI
                 System.Timers.Timer timer = new System.Timers.Timer(33);
                 timer.Elapsed += TickEvent;
                 timer.Start();
-            } catch
+            }
+            catch
             {
                 await DisplayAlert("Alert", "Unable to connect :(", "OK");
             }
@@ -187,7 +135,7 @@ namespace ClientGUI
         /// <param name="e"> the event args </param>
         private void OnEntryTextChanged(object sender, EventArgs e)
         {
-            Entry space = (Entry) sender;
+            Entry space = (Entry)sender;
             if (space.Text == " ")
             {
                 float xPos = (float)mousePosition.X;
@@ -219,9 +167,10 @@ namespace ClientGUI
                 {
                     // update the stats display
                     Dispatcher.Dispatch(() => { FoodLabel.Text = "Food: " + drawable.client.world.foods.Count; });
-                    Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + (int) drawable.client.thisPlayer.X + ", " + (int) drawable.client.thisPlayer.Y; });
+                    Dispatcher.Dispatch(() => { PositionLabel.Text = "Position: " + (int)drawable.client.thisPlayer.X + ", " + (int)drawable.client.thisPlayer.Y; });
                     Dispatcher.Dispatch(() => { MassLabel.Text = "Mass: " + drawable.client.thisPlayer.Mass; });
-                } catch
+                }
+                catch
                 {
 
                 }
@@ -251,14 +200,10 @@ namespace ClientGUI
         }
 
         /// <summary>
-        /// This is the disconnection delegate to be passed into the Networking object, which 
-        /// simply provides helpful logging information.
+        /// Does nothing, must be provided to make networking object
         /// </summary>
         /// <param name="networking"> the networking object that disconnected </param>
-        private void OnDisconnect(Networking networking)
-        {
-            drawable.client.world._logger.LogDebug(" player successfully disconnected ");
-        }
+        private void OnDisconnect(Networking networking) {}
 
         /// <summary>
         /// This is the message received delegate to be passed into the Networking object, which 
@@ -296,7 +241,7 @@ namespace ClientGUI
                             drawable.client.world.foods.Add(food.ID, food);
                             drawable.client.world._logger.LogTrace(" added food ");
                         }
-                    }  
+                    }
                 }
             }
 
@@ -305,7 +250,6 @@ namespace ClientGUI
             else if (message.Contains(Protocols.CMD_Player_Object))
             {
                 stopWatch.Start();
-                stopWatch2.Start();
 
                 string id = message.Substring(23);
                 int.TryParse(id, out int result);
@@ -351,52 +295,6 @@ namespace ClientGUI
                         }
                     }
                 }
-
-                // calculate the rank of this player if it's a new best
-                if (drawable.client.thisPlayer != null)
-                {
-                    List<float> masses = new List<float>();
-                    foreach (Player player in players)
-                    {
-                        masses.Add(player.Mass);
-                    }
-                    masses.Sort();
-                    for (int i = 0; i < masses.Count; i++)
-                    {
-                        if (masses[i] == drawable.client.thisPlayer.Mass)
-                        {
-                            int rank = masses.Count - i;
-                            if (rank < bestRank)
-                            {
-                                bestRank = rank;
-                            }
-                        }
-                    }
-                }
-
-                // see if this player is top ranked player for database stats
-                if (!hasBeenNumOne && drawable.client.thisPlayer != null)
-                {
-                    lock (drawable.client.world.players)
-                    {
-                        bool isBiggest = true;
-                        foreach (Player player in drawable.client.world.players.Values)
-                        {
-                            if (player.Mass > drawable.client.thisPlayer.Mass)
-                            {
-                                isBiggest = false;
-                                break;
-                            }
-                        }
-
-                        if (isBiggest)
-                        {
-                            hasBeenNumOne = true;
-                            timeWhenReachedTopRank = (int) stopWatch2.Elapsed.TotalMinutes;
-                        }
-                    }
-                }
-                
             }
 
 
@@ -427,9 +325,6 @@ namespace ClientGUI
                     {
                         if (drawable.client.world.players.Keys.Contains(id))
                         {
-                            // send stats to database
-                            SendToDeadPlayersTable(drawable.client.world.players[id].Name, (int) drawable.client.world.players[id].Mass);
-
                             drawable.client.world.players.Remove(id);
                             drawable.client.world._logger.LogTrace(" player died ");
                         }
@@ -438,24 +333,15 @@ namespace ClientGUI
                     // if "this player" has died, present their stats and ask if they want to play again
                     if (id == drawable.client.thisPlayer.ID)
                     {
-                        TimeSpan ts = stopWatch.Elapsed;
-                        stopWatch.Stop();
-                        stopWatch2.Stop();
-
-                        // send stats to the database
-                        SendStatsToDB(drawable.client.thisPlayer.Name, GameID, (int) drawable.client.thisPlayer.Mass, (int) ts.TotalMinutes, timeWhenReachedTopRank, bestRank);
-
-
-
                         drawable.client.world._logger.LogDebug(" this player has died ");
+                        stopWatch.Stop();
+                        TimeSpan ts = stopWatch.Elapsed;
                         thisPlayerDead = true;
-                        wantsToPlayAgain = await DisplayAlert("You died!", "Your final mass was " + drawable.client.thisPlayer.Mass + ",\nand you managed to stay alive for " + ts.TotalMinutes + " minutes!\nDo you want to play again?", "Yes", "No");
+                        wantsToPlayAgain = await DisplayAlert("You died!", "Your final mass was " + drawable.client.thisPlayer.Mass + ",\nand you managed to stay alive for " + ts.Minutes + " minutes!\nDo you want to play again?", "Yes", "No");
                     }
 
                     if (wantsToPlayAgain)
                     {
-                        GameID++;
-                        bestRank = int.MaxValue;
                         drawable.client.world._logger.LogDebug(" this player is restarting ");
                         String command = String.Format(Protocols.CMD_Start_Game, NameEntry.Text);
                         channel.Send(command);
@@ -500,68 +386,6 @@ namespace ClientGUI
                         }
                     }
                 }
-            }
-        }
-
-        /// <summary>
-        /// This inserts stats into the Players1 and Games5 tables in our database.
-        /// </summary>
-        /// <param name="name"> the name of the player to put in the players table </param>
-        /// <param name="gameid"> the gameid to put into the games table </param>
-        /// <param name="mass"> the mass to put into the games table </param>
-        /// <param name="timeAlive"> the game length to put into the games table </param>
-        /// <param name="topTime"> the time at which the player reached number 1 to put 
-        /// into the games table </param>
-        /// <param name="bestRank"> the best rank this player achieved in this game </param>
-        private void SendStatsToDB(string name, int gameid, int mass, int timeAlive, int topTime, int bestRank)
-        {
-            try
-            {
-                using SqlConnection con = new SqlConnection(connectionString);
-                con.Open();
-                using SqlCommand cmd = new SqlCommand($@"INSERT INTO Players1 VALUES ('{name}');", con);
-                cmd.ExecuteNonQuery();
-
-
-                using SqlConnection con2 = new SqlConnection(connectionString);
-                con2.Open();
-                using SqlCommand cmd2 = new SqlCommand($@"SELECT PlayerID FROM Players1 WHERE Name='{name}'", con2);
-                using SqlDataReader reader = cmd2.ExecuteReader();
-
-                int ID = 0;
-
-                // this should only loop once
-                while (reader.Read())
-                {
-                    ID = reader.GetInt32(0);
-                }
-
-                using SqlConnection con3 = new SqlConnection(connectionString);
-                con3.Open();
-                using SqlCommand cmd3 = new SqlCommand($@"INSERT INTO Games5 VALUES ({gameid}, {ID}, {mass}, {timeAlive}, {topTime}, {bestRank});", con3);
-                cmd3.ExecuteNonQuery();
-            } catch 
-            { 
-            
-            }   
-        }
-
-        /// <summary>
-        /// This inserts stats into the DeadPlayers table in our database.
-        /// </summary>
-        /// <param name="name"> the Name of the dead player to put in the table </param>
-        /// <param name="mass"> the final mass of the dead player to put in the table </param>
-        private void SendToDeadPlayersTable(string name, int mass)
-        {
-            try
-            {
-                using SqlConnection con = new SqlConnection(connectionString);
-                con.Open();
-                using SqlCommand cmd = new SqlCommand($@"INSERT INTO DeadPlayers VALUES ('{name}', {mass});", con);
-                cmd.ExecuteNonQuery();
-            } catch
-            {
-
             }
         }
     }
