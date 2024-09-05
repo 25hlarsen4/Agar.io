@@ -19,7 +19,7 @@ If the player isn't careful, they themselves could get eaten by other bigger pla
 If the player is big enough, they can shoot a part of themselves off, using the space bar, to eat targets that are trying to escape. 
 If the player dies, they can choose to quit or play again.
 To play: first run the provided server, then run this client, type your desired player name, type the name of the machine running the
-server (defaulted to localhost), and begin the fun!
+server (defaulted to localhost), hit enter, and begin the fun!
 
 # User Interface and Game Design Decisions:
 
