@@ -3,8 +3,6 @@ Authors:			Hannah Larsen & Todd Oldham
 StartDate:			05-April-2023
 Course:				CS3500, University of Utah, School of Computing
 GitHubIDs:			25hlarsen4, Destroyr-of-u
-Repo:				https://github.com/uofu-cs3500-spring23/assignment8agario-larsen__oldham.git
-CommitDate:			12-April-2023 8:30 pm
 Solution:			Agario
 Copyright:			CS3500, Hannah Larsen, Todd Oldham - This work may not be copied for use in academic coursework.
 ```
@@ -18,42 +16,13 @@ will follow your mouse.
 If the player isn't careful, they themselves could get eaten by other bigger players. 
 If the player is big enough, they can shoot a part of themselves off, using the space bar, to eat targets that are trying to escape. 
 If the player dies, they can choose to quit or play again.
-To play: first run the provided server, then run this client, type your desired player name, type the name of the machine running the
+
+# How to play:
+- The application runs on Visual Studio NET7.0 and the MAUI workload must be downloaded
+- First run the provided server, then run this client, type your desired player name, type the name of the machine running the
 server (defaulted to localhost), hit enter, and begin the fun!
-
-# User Interface and Game Design Decisions:
-
-The game has two views, one to start the game and one to play. The start is very simple because the only required information is the
-server and the player name. All information about the game objects is provided by the server, so all we had to do was draw and update them,
-which we did using a timer and timing capabilities of our computers. We used typical MAUI components such as editors, entries, and labels. One
-important note is that to get the space bar to work for the split we used an entry. However the entry needs to be clicked on before the split
-function can work, this is due to the fact that we have had problems with auto focusing an entry in MAUI. We followed the MVC laid out by the
-assignment.
-
-# Partnership:
-
-The majority of the code was done using pair programming standards, the only things that were worked on individually
-were, setting up files, updating comments or headers, just general improvements to the view and flow of the code and
-documentation.
-
-
-# Branching:
-
-This project did not have a branch as we did not work on anything separately from one another and we followed along with
-the instructions.
-
-# Testing:
-
-To test our project we compared it to the provided client for this assignment. If our game was able to do the same things as the provided client
-then we felt that it was sufficient. We tested multiple times throughout the development process and we used a lot of debug statements to check
-the condition of variables and objects to make sure that they did what we thought they were supposed to do.
-
-# Time Expenditures:
-
-Predicted hours: 12	   Actual hours: 12
-Note: The time spent debugging, researching tools, and actually coding was split fairly evenly.
-Note2: The drawing of the scene was more of a bottleneck than the networking data.
-
-Both of our time estimation skills are improving throughout this semester, we have been able to more accurately predict the amount of
-time the assignments will take. This assignment wasn't too bad in terms of complexity, but the instructions were a little hard to
-follow which made implementation a little harder than we thought.
+- To move faster, move the mouse further from your player.
+- To shoot a part of yourself to catch another player, hit the space bar. (Note that due to MAUI issues, if the space bar is not working, 
+you may have to first click the entry box in the top right corner and then hit space). 
+- You can tell if you've hit the game world boundary and should change direction by looking if the coordinates in the top right corner
+  are no longer changing (due to MAUI issues, the graphics view background color could not be changed to show the boundary visually)
