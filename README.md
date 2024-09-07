@@ -19,8 +19,8 @@ If the player dies, they can choose to quit or play again.
 
 # How to play:
 - The application runs on Visual Studio NET7.0 and the MAUI workload must be downloaded
-- First run the provided server, then run this client, type your desired player name, type the name of the machine running the
-server (defaulted to localhost), hit enter, and begin the fun!
+- First run the provided server (note that it only runs on windows machines), then run this client, type your desired player name, type the
+  name of the machine running the server (defaulted to localhost), hit enter, and begin the fun!
 - To move faster, move the mouse further from your player.
 - To shoot a part of yourself to catch another player, hit the space bar. (Note that due to MAUI issues, if the space bar is not working, 
 you may have to first click the entry box in the top right corner and then hit space). 
